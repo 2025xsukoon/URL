@@ -3,516 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced URL Shortener</title>
+    <title>QR Code Generator</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
-    <!-- Firebase SDKs -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, where, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        let app;
-        let db;
-        let auth;
-        let currentUserId = null;
-        let isAuthReady = false;
-
-        // Global variables provided by Canvas environment
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-        // --- Firebase Initialization and Authentication ---
-        async function initializeFirebase() {
-            try {
-                if (Object.keys(firebaseConfig).length === 0) {
-                    console.error("Firebase config is empty. Please ensure __firebase_config is provided.");
-                    // Fallback for local testing without Canvas environment
-                    app = initializeApp({
-                        apiKey: "YOUR_API_KEY", // Replace with your Firebase API Key for local testing
-                        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-                        projectId: "YOUR_PROJECT_ID",
-                        storageBucket: "YOUR_PROJECT_ID.appspot.com",
-                        messagingSenderId: "YOUR_SENDER_ID",
-                        appId: "YOUR_APP_ID"
-                    });
-                } else {
-                    app = initializeApp(firebaseConfig);
-                }
-
-                db = getFirestore(app);
-                auth = getAuth(app);
-
-                // Sign in with custom token if available, otherwise anonymously
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                    console.log("Signed in with custom token.");
-                } else {
-                    await signInAnonymously(auth);
-                    console.log("Signed in anonymously.");
-                }
-
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        currentUserId = user.uid;
-                        console.log("User ID:", currentUserId);
-                        document.getElementById('userIdDisplay').textContent = `Your User ID: ${currentUserId}`;
-                        loadUserLinks(); // Load links once authenticated
-                    } else {
-                        currentUserId = crypto.randomUUID(); // Fallback for unauthenticated
-                        console.log("No user signed in. Using a random UUID for session:", currentUserId);
-                        document.getElementById('userIdDisplay').textContent = `Your Session ID: ${currentUserId} (Sign in for persistent links)`;
-                    }
-                    isAuthReady = true;
-                    hideLoading();
-                });
-
-            } catch (error) {
-                console.error("Error initializing Firebase or signing in:", error);
-                document.getElementById('messageBox').innerHTML = `<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">Error: ${error.message}</div>`;
-                hideLoading();
-            }
-        }
-
-        // --- Utility Functions ---
-
-        // Generates a random alphanumeric short code
-        function generateShortCode(length = 6) {
-            const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let result = '';
-            for (let i = 0; i < length; i++) {
-                result += characters.charAt(Math.floor(Math.random() * characters.length));
-            }
-            return result;
-        }
-
-        // Displays messages in a custom message box
-        function showMessage(message, type = 'info') {
-            const messageBox = document.getElementById('messageBox');
-            let bgColor, borderColor, textColor;
-            if (type === 'success') {
-                bgColor = 'bg-green-100';
-                borderColor = 'border-green-400';
-                textColor = 'text-green-700';
-            } else if (type === 'error') {
-                bgColor = 'bg-red-100';
-                borderColor = 'border-red-400';
-                textColor = 'text-red-700';
-            } else {
-                bgColor = 'bg-blue-100';
-                borderColor = 'border-blue-400';
-                textColor = 'text-blue-700';
-            }
-            messageBox.innerHTML = `<div class="${bgColor} ${borderColor} ${textColor} px-4 py-3 rounded-lg relative mb-4" role="alert">${message}</div>`;
-            setTimeout(() => {
-                messageBox.innerHTML = '';
-            }, 5000); // Clear message after 5 seconds
-        }
-
-        function showLoading() {
-            document.getElementById('loadingOverlay').classList.remove('hidden');
-        }
-
-        function hideLoading() {
-            document.getElementById('loadingOverlay').classList.add('hidden');
-        }
-
-        // --- Core URL Shortening Logic ---
-        window.shortenUrl = async function() {
-            if (!isAuthReady) {
-                showMessage("Please wait, authentication is still loading.", 'info');
-                return;
-            }
-
-            const longUrlInput = document.getElementById('longUrlInput');
-            const customAliasInput = document.getElementById('customAliasInput');
-            const longUrl = longUrlInput.value.trim();
-            let customAlias = customAliasInput.value.trim();
-
-            if (!longUrl) {
-                showMessage('Please enter a long URL.', 'error');
-                return;
-            }
-
-            if (!longUrl.startsWith('http://') && !longUrl.startsWith('https://')) {
-                showMessage('Please enter a valid URL starting with http:// or https://', 'error');
-                return;
-            }
-
-            showLoading();
-
-            try {
-                let shortCode = customAlias;
-                if (shortCode) {
-                    // Check if custom alias is already taken
-                    const docRef = doc(db, `artifacts/${appId}/users/${currentUserId}/shortened_urls`, shortCode);
-                    const docSnap = await getDoc(docRef);
-                    if (docSnap.exists()) {
-                        showMessage('Custom alias is already taken. Please choose another one.', 'error');
-                        hideLoading();
-                        return;
-                    }
-                } else {
-                    // Generate unique short code
-                    let foundUnique = false;
-                    while (!foundUnique) {
-                        shortCode = generateShortCode();
-                        const docRef = doc(db, `artifacts/${appId}/users/${currentUserId}/shortened_urls`, shortCode);
-                        const docSnap = await getDoc(docRef);
-                        if (!docSnap.exists()) {
-                            foundUnique = true;
-                        }
-                    }
-                }
-
-                // Construct full short URL for display
-                const fullShortUrl = `${window.location.origin}/?s=${shortCode}`;
-
-                const urlData = {
-                    longUrl: longUrl,
-                    shortCode: shortCode,
-                    createdAt: new Date().toISOString(),
-                    clicks: 0,
-                    userId: currentUserId
-                };
-
-                // Store in Firestore
-                await setDoc(doc(db, `artifacts/${appId}/users/${currentUserId}/shortened_urls`, shortCode), urlData);
-
-                longUrlInput.value = '';
-                customAliasInput.value = '';
-                showMessage(`URL shortened successfully!`, 'success');
-                renderShortenedUrl(urlData); // Add to dashboard immediately
-                hideLoading();
-
-            } catch (e) {
-                console.error("Error shortening URL: ", e);
-                showMessage(`Error shortening URL: ${e.message}`, 'error');
-                hideLoading();
-            }
-        };
-
-        // --- Redirection and Ad Simulation ---
-        async function handleRedirection() {
-            const params = new URLSearchParams(window.location.search);
-            const shortCode = params.get('s');
-
-            if (shortCode) {
-                showLoading(); // Show loading while fetching link
-
-                try {
-                    // Try to get the link first using the currentUserId
-                    let docRef = doc(db, `artifacts/${appId}/users/${currentUserId}/shortened_urls`, shortCode);
-                    let docSnap = await getDoc(docRef);
-
-                    // If not found for current user, try to find it under other users (public-like access)
-                    // NOTE: In a real app, you'd manage public/private access via security rules.
-                    // This is a simplified approach to find any matching link.
-                    if (!docSnap.exists()) {
-                        const allUsersCollection = collection(db, `artifacts/${appId}/users`);
-                        const q = query(allUsersCollection);
-                        const usersSnapshot = await getDocs(q);
-
-                        let found = false;
-                        for (const userDoc of usersSnapshot.docs) {
-                            const userId = userDoc.id;
-                            const userLinkDocRef = doc(db, `artifacts/${appId}/users/${userId}/shortened_urls`, shortCode);
-                            const userLinkDocSnap = await getDoc(userLinkDocRef);
-                            if (userLinkDocSnap.exists()) {
-                                docSnap = userLinkDocSnap;
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) {
-                            throw new Error("Shortened URL not found.");
-                        }
-                    }
-
-                    const data = docSnap.data();
-                    const longUrl = data.longUrl;
-
-                    // Increment click count
-                    await updateDoc(docSnap.ref, {
-                        clicks: (data.clicks || 0) + 1
-                    });
-                    console.log(`Click count updated for ${shortCode}`);
-
-                    hideLoading();
-                    await simulateAdDisplay(longUrl); // Simulate ad display before redirecting
-
-                } catch (e) {
-                    console.error("Error retrieving URL or updating clicks: ", e);
-                    hideLoading();
-                    showMessage(`The shortened URL "${shortCode}" could not be found or an error occurred.`, 'error');
-                    // Clear the 's' parameter from URL to prevent continuous error on refresh
-                    const url = new URL(window.location.href);
-                    url.searchParams.delete('s');
-                    window.history.replaceState({}, document.title, url.toString());
-                }
-            } else {
-                hideLoading(); // Hide loading if no short code is present
-            }
-        }
-
-        // Simulates an ad display
-        async function simulateAdDisplay(url) {
-            return new Promise(resolve => {
-                const adOverlay = document.getElementById('adOverlay');
-                const adTimerSpan = document.getElementById('adTimer');
-                adOverlay.classList.remove('hidden');
-
-                let timeLeft = 5; // 5-second ad
-                adTimerSpan.textContent = timeLeft;
-
-                const timerInterval = setInterval(() => {
-                    timeLeft--;
-                    adTimerSpan.textContent = timeLeft;
-                    if (timeLeft <= 0) {
-                        clearInterval(timerInterval);
-                        adOverlay.classList.add('hidden');
-                        window.location.replace(url); // Redirect after ad
-                        resolve();
-                    }
-                }, 1000);
-
-                document.getElementById('skipAdButton').onclick = () => {
-                    clearInterval(timerInterval);
-                    adOverlay.classList.add('hidden');
-                    window.location.replace(url); // Redirect immediately on skip
-                    resolve();
-                };
-            });
-        }
-
-        // --- User Link Dashboard ---
-        function renderShortenedUrl(urlData) {
-            const linksContainer = document.getElementById('userLinksContainer');
-            const fullShortUrl = `${window.location.origin}/?s=${urlData.shortCode}`;
-
-            // Create a new div element for the link
-            const linkDiv = document.createElement('div');
-            linkDiv.id = `link-${urlData.shortCode}`; // Unique ID for updating/deleting
-            linkDiv.className = 'bg-gray-700 p-4 rounded-lg shadow-md mb-4 flex flex-col md:flex-row items-start md:items-center justify-between space-y-3 md:space-y-0 md:space-x-4';
-            linkDiv.innerHTML = `
-                <div class="flex-grow">
-                    <p class="text-sm text-gray-400 break-all">Original: <a href="${urlData.longUrl}" target="_blank" class="text-blue-300 hover:underline">${urlData.longUrl}</a></p>
-                    <p class="text-lg font-semibold text-white break-all">Short: <a href="${fullShortUrl}" target="_blank" class="text-purple-300 hover:underline">${fullShortUrl}</a></p>
-                    <p class="text-sm text-gray-400">Clicks: <span id="clicks-${urlData.shortCode}">${urlData.clicks}</span></p>
-                </div>
-                <div class="flex flex-wrap gap-2 justify-end">
-                    <button onclick="copyToClipboard('${fullShortUrl}')" class="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">Copy</button>
-                    <button onclick="generateQrCode('${fullShortUrl}', '${urlData.shortCode}')" class="px-3 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">QR</button>
-                    <button onclick="editLink('${urlData.shortCode}', '${urlData.longUrl}')" class="px-3 py-1 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 transition-colors">Edit</button>
-                    <button onclick="deleteLink('${urlData.shortCode}')" class="px-3 py-1 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors">Delete</button>
-                </div>
-            `;
-            // Add to the top of the list
-            linksContainer.prepend(linkDiv);
-        }
-
-        // --- CRUD Operations ---
-        async function loadUserLinks() {
-            if (!isAuthReady) {
-                console.warn("Auth not ready, delaying link load.");
-                return;
-            }
-            showLoading();
-            try {
-                const q = query(collection(db, `artifacts/${appId}/users/${currentUserId}/shortened_urls`));
-                // Use onSnapshot for real-time updates
-                onSnapshot(q, (snapshot) => {
-                    const linksContainer = document.getElementById('userLinksContainer');
-                    linksContainer.innerHTML = ''; // Clear existing links
-                    snapshot.forEach((doc) => {
-                        renderShortenedUrl(doc.data());
-                    });
-                    if (snapshot.empty) {
-                        linksContainer.innerHTML = '<p class="text-gray-400">No shortened links yet. Shorten one above!</p>';
-                    }
-                    hideLoading();
-                }, (error) => {
-                    console.error("Error fetching real-time links:", error);
-                    showMessage(`Error loading links: ${error.message}`, 'error');
-                    hideLoading();
-                });
-            } catch (e) {
-                console.error("Error loading user links: ", e);
-                showMessage(`Error loading links: ${e.message}`, 'error');
-                hideLoading();
-            }
-        }
-
-        window.editLink = function(shortCode, currentLongUrl) {
-            const newLongUrl = prompt(`Edit original URL for ${window.location.origin}/?s=${shortCode}`, currentLongUrl);
-            if (newLongUrl !== null && newLongUrl.trim() !== '' && (newLongUrl.startsWith('http://') || newLongUrl.startsWith('https://'))) {
-                updateLinkInFirestore(shortCode, newLongUrl.trim());
-            } else if (newLongUrl !== null && newLongUrl.trim() !== '') {
-                 showMessage('Please enter a valid URL starting with http:// or https://', 'error');
-            }
-        };
-
-        async function updateLinkInFirestore(shortCode, newLongUrl) {
-            showLoading();
-            try {
-                const docRef = doc(db, `artifacts/${appId}/users/${currentUserId}/shortened_urls`, shortCode);
-                await updateDoc(docRef, {
-                    longUrl: newLongUrl,
-                    updatedAt: new Date().toISOString()
-                });
-                showMessage(`Link ${shortCode} updated successfully!`, 'success');
-                // The onSnapshot listener will automatically re-render the list
-            } catch (e) {
-                console.error("Error updating link: ", e);
-                showMessage(`Error updating link: ${e.message}`, 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        window.deleteLink = async function(shortCode) {
-            const confirmed = confirm(`Are you sure you want to delete ${window.location.origin}/?s=${shortCode}?`);
-            if (confirmed) {
-                showLoading();
-                try {
-                    await deleteDoc(doc(db, `artifacts/${appId}/users/${currentUserId}/shortened_urls`, shortCode));
-                    showMessage(`Link ${shortCode} deleted successfully.`, 'success');
-                    // The onSnapshot listener will automatically re-render the list
-                } catch (e) {
-                    console.error("Error deleting link: ", e);
-                    showMessage(`Error deleting link: ${e.message}`, 'error');
-                } finally {
-                    hideLoading();
-                }
-            }
-        };
-
-        // --- QR Code Generation ---
-        window.generateQrCode = function(url, shortCode) {
-            const qrCanvas = document.getElementById('qrCanvas');
-            const qrImage = document.getElementById('qrImage');
-            const qrLink = document.getElementById('qrLink');
-            const qrModal = document.getElementById('qrModal');
-
-            qrLink.href = url;
-            qrLink.textContent = url;
-
-            // Clear previous QR code if any
-            qrCanvas.innerHTML = ''; // Clear the canvas content
-            qrImage.src = ''; // Clear the image source
-
-            new QRious({
-                element: qrCanvas,
-                value: url,
-                size: 200,
-                padding: 10,
-                level: 'H' // High error correction
-            });
-
-            // Convert canvas to image for easier saving/sharing
-            qrImage.src = qrCanvas.toDataURL('image/png');
-
-            qrModal.classList.remove('hidden');
-        };
-
-        window.closeQrModal = function() {
-            document.getElementById('qrModal').classList.add('hidden');
-        };
-
-        // --- Copy to Clipboard ---
-        window.copyToClipboard = function(text) {
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            document.body.appendChild(textarea);
-            textarea.select();
-            try {
-                document.execCommand('copy');
-                showMessage('Copied to clipboard!', 'success');
-            } catch (err) {
-                console.error('Failed to copy: ', err);
-                showMessage('Failed to copy to clipboard.', 'error');
-            }
-            document.body.removeChild(textarea);
-        };
-
-        // --- Initialize on Window Load ---
-        window.onload = function() {
-            initializeFirebase();
-            handleRedirection(); // Check for short code in URL on page load
-        };
-    </script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body {
             font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Light gray background */
+        }
+        /* Custom styles for better visual appeal */
+        .card {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+        }
+        .btn-primary {
+            background-image: linear-gradient(to right, #6366f1, #8b5cf6); /* Purple gradient */
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background-color: #4b5563; /* Gray */
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
         }
     </style>
 </head>
-<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-4">
+<body class="flex items-center justify-center min-h-screen p-4">
+    <div class="card p-6 md:p-8 rounded-xl w-full max-w-md text-center">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">URL to QR Code Generator</h1>
 
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 hidden">
-        <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-purple-500"></div>
-    </div>
-
-    <!-- Ad Simulation Overlay -->
-    <div id="adOverlay" class="fixed inset-0 bg-gray-900 bg-opacity-90 flex items-center justify-center z-50 hidden">
-        <div class="bg-gray-800 p-8 rounded-lg shadow-xl text-center max-w-sm w-full">
-            <h2 class="text-3xl font-bold text-yellow-400 mb-4">Advertisement!</h2>
-            <p class="text-lg text-gray-300 mb-6">Redirecting in <span id="adTimer" class="font-bold text-2xl">5</span> seconds...</p>
-            <div class="h-32 bg-gray-700 rounded-lg flex items-center justify-center text-gray-400 text-sm mb-6 animate-pulse">
-                <p>Simulated Ad Content Here</p>
-            </div>
-            <button id="skipAdButton" class="px-6 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700 transition-colors shadow-lg">Skip Ad & Continue</button>
-        </div>
-    </div>
-
-    <!-- QR Code Modal -->
-    <div id="qrModal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-40 hidden">
-        <div class="bg-gray-800 p-6 rounded-lg shadow-xl text-center relative max-w-sm w-full">
-            <button onclick="closeQrModal()" class="absolute top-3 right-3 text-gray-400 hover:text-white text-2xl">&times;</button>
-            <h2 class="text-2xl font-bold text-white mb-4">Your QR Code</h2>
-            <canvas id="qrCanvas" class="hidden"></canvas> <!-- Hidden canvas for QRious -->
-            <img id="qrImage" class="mx-auto border-4 border-purple-500 rounded-lg mb-4 w-48 h-48 object-contain" alt="QR Code">
-            <p class="text-sm text-gray-400 mb-2">Scan this QR code or use the link:</p>
-            <a id="qrLink" href="#" target="_blank" class="text-blue-400 hover:underline break-all text-sm block mb-4"></a>
-            <button onclick="copyToClipboard(document.getElementById('qrLink').href)" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">Copy QR Link</button>
-        </div>
-    </div>
-
-    <div class="w-full max-w-2xl bg-gray-800 p-6 rounded-lg shadow-xl mb-8">
-        <h1 class="text-4xl font-extrabold text-center text-purple-400 mb-6">Shorten Your URLs</h1>
-        <div id="messageBox" class="mb-4"></div>
-
-        <p id="userIdDisplay" class="text-sm text-gray-400 text-center mb-4"></p>
-
-        <div class="mb-4">
-            <label for="longUrlInput" class="block text-gray-300 text-sm font-semibold mb-2">Long URL:</label>
-            <input type="url" id="longUrlInput" placeholder="https://verylongexample.com/path/to/my/awesome/page" class="w-full p-3 rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-        </div>
+        <!-- Input for URL -->
         <div class="mb-6">
-            <label for="customAliasInput" class="block text-gray-300 text-sm font-semibold mb-2">Custom Alias (optional):</label>
-            <div class="flex rounded-md shadow-sm">
-                <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-600 bg-gray-700 text-gray-400 text-sm">
-                    <%= window.location.origin %>/?s=
-                </span>
-                <input type="text" id="customAliasInput" placeholder="my-awesome-link" class="flex-1 p-3 rounded-r-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-            </div>
+            <label for="urlInput" class="block text-left text-gray-700 text-sm font-medium mb-2">
+                Enter your URL:
+            </label>
+            <input
+                type="url"
+                id="urlInput"
+                placeholder="e.g., https://www.example.com"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-800"
+            />
         </div>
-        <button onclick="shortenUrl()" class="w-full py-3 bg-purple-600 text-white font-bold rounded-md hover:bg-purple-700 transition-all transform hover:scale-105 shadow-lg">
-            Shorten URL
+
+        <!-- Generate Button -->
+        <button
+            id="generateBtn"
+            class="btn-primary text-white font-semibold py-3 px-6 rounded-lg w-full mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        >
+            Generate QR Code
         </button>
-    </div>
 
-    <div class="w-full max-w-2xl bg-gray-800 p-6 rounded-lg shadow-xl">
-        <h2 class="text-3xl font-bold text-center text-purple-400 mb-6">Your Shortened Links</h2>
-        <div id="userLinksContainer" class="space-y-4">
-            <!-- Shortened links will be dynamically inserted here -->
-            <p class="text-gray-400 text-center">Loading your links...</p>
+        <!-- QR Code Display Area -->
+        <div id="qrcode" class="flex justify-center items-center p-4 bg-gray-50 rounded-lg border border-gray-200 min-h-[200px] mb-6">
+            <p id="qrPlaceholder" class="text-gray-500">Your QR code will appear here.</p>
+        </div>
+
+        <!-- Download Button (initially hidden) -->
+        <button
+            id="downloadBtn"
+            class="btn-secondary text-white font-semibold py-3 px-6 rounded-lg w-full hidden focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2"
+        >
+            Download QR Code
+        </button>
+
+        <!-- Message Box for alerts -->
+        <div id="messageBox" class="mt-4 p-3 bg-red-100 text-red-700 rounded-lg hidden" role="alert">
+            <p id="messageText"></p>
         </div>
     </div>
 
+    <!-- QR Code Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode.js/1.0.0/qrcode.min.js"></script>
+
+    <script>
+        // Get references to DOM elements
+        const urlInput = document.getElementById('urlInput');
+        const generateBtn = document.getElementById('generateBtn');
+        const qrcodeDiv = document.getElementById('qrcode');
+        const qrPlaceholder = document.getElementById('qrPlaceholder');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const messageBox = document.getElementById('messageBox');
+        const messageText = document.getElementById('messageText');
+
+        let qrCodeInstance = null; // To store the QRCode.js instance
+
+        /**
+         * Displays a message in the message box.
+         * @param {string} message - The message to display.
+         * @param {string} type - The type of message ('success', 'error', 'info').
+         */
+        function showMessage(message, type = 'info') {
+            messageText.textContent = message;
+            messageBox.className = 'mt-4 p-3 rounded-lg'; // Reset classes
+            if (type === 'error') {
+                messageBox.classList.add('bg-red-100', 'text-red-700');
+            } else if (type === 'success') {
+                messageBox.classList.add('bg-green-100', 'text-green-700');
+            } else {
+                messageBox.classList.add('bg-blue-100', 'text-blue-700');
+            }
+            messageBox.classList.remove('hidden');
+        }
+
+        /**
+         * Hides the message box.
+         */
+        function hideMessage() {
+            messageBox.classList.add('hidden');
+        }
+
+        /**
+         * Generates the QR code based on the input URL.
+         */
+        generateBtn.addEventListener('click', () => {
+            const url = urlInput.value.trim();
+
+            // Clear previous QR code and hide download button
+            qrcodeDiv.innerHTML = '';
+            qrPlaceholder.classList.remove('hidden');
+            downloadBtn.classList.add('hidden');
+            hideMessage();
+
+            if (!url) {
+                showMessage('Please enter a URL to generate a QR code.', 'error');
+                return;
+            }
+
+            // Validate URL format (simple check)
+            try {
+                new URL(url); // Attempt to create a URL object to validate
+            } catch (e) {
+                showMessage('Please enter a valid URL (e.g., https://www.example.com).', 'error');
+                return;
+            }
+
+            qrPlaceholder.classList.add('hidden'); // Hide placeholder text
+
+            // Create new QRCode instance
+            // qrcode.js appends a canvas or img tag to the div
+            qrCodeInstance = new QRCode(qrcodeDiv, {
+                text: url,
+                width: 200,
+                height: 200,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H // High error correction
+            });
+
+            // Show download button after a small delay to ensure QR code is rendered
+            setTimeout(() => {
+                downloadBtn.classList.remove('hidden');
+            }, 100);
+        });
+
+        /**
+         * Downloads the generated QR code.
+         */
+        downloadBtn.addEventListener('click', () => {
+            if (qrCodeInstance) {
+                // qrcode.js generates a canvas element
+                const canvas = qrcodeDiv.querySelector('canvas');
+                if (canvas) {
+                    // Create a temporary link element
+                    const link = document.createElement('a');
+                    link.download = 'qrcode.png';
+                    link.href = canvas.toDataURL('image/png'); // Get data URL of the canvas
+                    document.body.appendChild(link); // Append to body to make it clickable
+                    link.click(); // Programmatically click the link
+                    document.body.removeChild(link); // Remove the link
+                    showMessage('QR code downloaded successfully!', 'success');
+                } else {
+                    showMessage('QR code not found for download. Please generate it first.', 'error');
+                }
+            } else {
+                showMessage('No QR code generated yet.', 'error');
+            }
+        });
+
+        // Initialize on window load (though not strictly necessary for this simple app, good practice)
+        window.onload = () => {
+            // Any initial setup if needed
+        };
+    </script>
 </body>
 </html>
 
