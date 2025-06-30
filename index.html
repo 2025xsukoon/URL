@@ -1,198 +1,1133 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Generator</title>
+  <head>
+    <meta charset="utf-8" />
+    <title>Ed Hinrichsen – Personal Website</title>
+    <meta
+      name="description"
+      content="My name is Ed Hinrichsen, I’m an award-winning web dev / digital designer and full stack software engineer. I have a passion for all things technology and design, from software engineering & machine learning to UI/UX & 3D graphics."
+    />
+    <link rel="icon" type="image/png" href="https://placehold.co/32x32/f6d4b1/000000?text=EH" />
+
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0,viewport-fit=cover"
+    />
+    <link rel="apple-touch-icon" sizes="180x180" href="https://placehold.co/180x180/f6d4b1/000000?text=EH" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-title"
+      content="Ed Hinrichsen – Personal Website"
+    />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="theme-color" content="#f6d4b1" />
+
+    <meta property="og:title" content="Ed Hinrichsen – Personal Website" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://edh.dev/" />
+    <meta property="og:image" content="https://placehold.co/1200x630/f6d4b1/000000?text=Ed+Hinrichsen" />
+    <meta
+      name="og:description"
+      content="My name is Ed Hinrichsen, I’m an award-winning web dev / digital designer and full stack software engineer. I have a passion for all things technology and design, from software engineering & machine learning to UI/UX & 3D graphics."
+    />
+    <link rel="manifest" href="/manifest.json" />
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts - Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f0f2f5; /* Light gray background */
+      /* Custom CSS for base styles and specific overrides not easily done with Tailwind */
+      :root {
+        --primary-color: #f6d4b1;
+        --secondary-color: #333;
+        --text-color: #333;
+        --link-color: #007bff;
+        --link-hover-color: #0056b3;
+      }
+
+      body {
+        font-family: 'Inter', sans-serif;
+        color: var(--text-color);
+        background-color: #f0f0f0; /* Light background */
+        line-height: 1.6;
+        scroll-behavior: smooth;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        overflow-x: hidden; /* Prevent horizontal scroll */
+      }
+
+      /* Ensure canvas takes full width and height of its container */
+      .webgl {
+        position: absolute;
+        top: 0;
+        left: 0;
+        outline: none;
+        z-index: 0; /* Behind other content */
+      }
+
+      /* Styling for the loading screen */
+      #loading {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: #1a1a1a;
+        color: var(--primary-color);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        transition: opacity 1s ease-out;
+      }
+
+      #loading.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      #loading-bar {
+        width: 80%;
+        max-width: 400px;
+        height: 8px;
+        background-color: #555;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-top: 1rem;
+      }
+
+      #loading-bar-progress {
+        width: 0%;
+        height: 100%;
+        background-color: var(--primary-color);
+        transition: width 0.5s ease-in-out;
+      }
+
+      #loading-items {
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      /* Navigation specific styles */
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background-color: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(5px);
+        z-index: 50;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .menu-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .menu-btn .btn {
+        background-color: var(--primary-color);
+        color: var(--text-color);
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.5rem;
+        transition: background-color 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .menu-btn .btn:hover {
+        background-color: #e0c29f;
+      }
+
+      .menu-btn svg {
+        fill: currentColor;
+      }
+
+      .menu-body {
+        display: none; /* Hidden by default */
+        flex-direction: column;
+        position: absolute;
+        top: 100%; /* Below the nav bar */
+        left: 0;
+        width: 100%;
+        background-color: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(5px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 1rem 0;
+      }
+
+      nav.active .menu-body {
+        display: flex; /* Show when active */
+      }
+
+      .menu-body a {
+        padding: 0.75rem 1.5rem;
+        color: var(--text-color);
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+      }
+
+      .menu-body a:hover {
+        background-color: var(--primary-color);
+      }
+
+      #tip-scroll {
+        display: none; /* Hidden by default, can be shown with JS */
+        position: fixed;
+        bottom: 1rem;
+        right: 1rem;
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.8rem;
+        z-index: 40;
+      }
+
+      /* Hero backup for non-WebGL or initial load */
+      #hero-backup {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: var(--primary-color);
+        z-index: 1;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      }
+      #hero-backup h1 {
+        font-size: 3rem;
+        font-weight: 700;
+      }
+      #hero-backup h3 {
+        font-size: 1.5rem;
+        font-weight: 400;
+      }
+      #hero-backup ul {
+        list-style: none;
+        padding: 0;
+        margin-top: 0.5rem;
+        font-size: 1.1rem;
+      }
+
+      /* Main content sections */
+      main {
+        position: relative;
+        z-index: 10; /* Above WebGL canvas */
+        padding-top: 5rem; /* Space for fixed nav */
+      }
+
+      section {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background-color: white;
+        border-radius: 1rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      section h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        color: var(--secondary-color);
+      }
+
+      section h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        margin-top: 2rem;
+        margin-bottom: 0.5rem;
+        color: var(--secondary-color);
+      }
+
+      section h3 {
+        font-size: 1.25rem;
+        font-weight: 400;
+        margin-bottom: 1rem;
+        color: #666;
+      }
+
+      section p {
+        margin-bottom: 1rem;
+      }
+
+      section a {
+        color: var(--link-color);
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      section a:hover {
+        color: var(--link-hover-color);
+        text-decoration: underline;
+      }
+
+      .skills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        list-style: none;
+        padding: 0;
+        margin-bottom: 1.5rem;
+      }
+
+      .skills li {
+        background-color: var(--primary-color);
+        padding: 0.3rem 0.8rem;
+        border-radius: 0.5rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-color);
+      }
+
+      hr {
+        border: none;
+        border-top: 1px solid #eee;
+        margin: 2rem 0;
+      }
+
+      .image {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-radius: 0.75rem;
+        overflow: hidden; /* Ensure rounded corners apply to children */
+      }
+
+      .image img,
+      .image video,
+      .image iframe {
+        width: 100%;
+        height: auto;
+        border-radius: 0.75rem; /* Apply rounded corners to media */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .collapse-btn {
+        background-color: var(--primary-color);
+        color: var(--text-color);
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        display: block; /* Make it a block element */
+        margin: 1rem auto; /* Center the button */
+      }
+
+      .collapse-btn:hover {
+        background-color: #e0c29f;
+        transform: translateY(-2px);
+      }
+
+      .collapse-body {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease-out;
+      }
+
+      .collapse-btn[collapsed="false"] + .collapse-body {
+        max-height: 500px; /* Adjust as needed for content */
+      }
+
+      footer {
+        text-align: center;
+        padding: 2rem;
+        margin-top: 3rem;
+        background-color: var(--secondary-color);
+        color: white;
+        font-size: 0.85rem;
+        border-top-left-radius: 1rem;
+        border-top-right-radius: 1rem;
+      }
+
+      footer div {
+        margin-bottom: 0.5rem;
+      }
+
+      /* Responsive adjustments */
+      @media (min-width: 768px) {
+        nav {
+          padding: 1rem 2rem;
         }
-        /* Custom styles for better visual appeal */
-        .card {
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            background-color: #ffffff;
+        .menu-btn {
+          gap: 1rem;
         }
-        .btn-primary {
-            background-image: linear-gradient(to right, #6366f1, #8b5cf6); /* Purple gradient */
-            transition: all 0.3s ease;
+        .menu-body {
+          position: static;
+          flex-direction: row;
+          display: flex !important; /* Always show on desktop */
+          background-color: transparent;
+          box-shadow: none;
+          padding: 0;
         }
-        .btn-primary:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
+        .menu-body a {
+          padding: 0.5rem 1rem;
         }
-        .btn-secondary {
-            background-color: #4b5563; /* Gray */
-            transition: all 0.3s ease;
+        .menu-btn > button {
+          display: none; /* Hide hamburger on desktop */
         }
-        .btn-secondary:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
+        #hero-backup h1 {
+          font-size: 5rem;
         }
+        #hero-backup h3 {
+          font-size: 2rem;
+        }
+        #hero-backup ul {
+          font-size: 1.5rem;
+        }
+        section {
+          padding: 3rem;
+          margin: 4rem auto;
+        }
+        section h1 {
+          font-size: 3.5rem;
+        }
+        section h2 {
+          font-size: 2.5rem;
+        }
+        section h3 {
+          font-size: 1.5rem;
+        }
+      }
     </style>
-</head>
-<body class="flex items-center justify-center min-h-screen p-4">
-    <div class="card p-6 md:p-8 rounded-xl w-full max-w-md text-center">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">URL to QR Code Generator</h1>
+  </head>
 
-        <!-- Input for URL -->
-        <div class="mb-6">
-            <label for="urlInput" class="block text-left text-gray-700 text-sm font-medium mb-2">
-                Enter your URL:
-            </label>
-            <input
-                type="url"
-                id="urlInput"
-                placeholder="e.g., https://www.example.com"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-800"
-            />
-        </div>
-
-        <!-- Generate Button -->
-        <button
-            id="generateBtn"
-            class="btn-primary text-white font-semibold py-3 px-6 rounded-lg w-full mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-        >
-            Generate QR Code
-        </button>
-
-        <!-- QR Code Display Area -->
-        <div id="qrcode" class="flex justify-center items-center p-4 bg-gray-50 rounded-lg border border-gray-200 min-h-[200px] mb-6">
-            <p id="qrPlaceholder" class="text-gray-500">Your QR code will appear here.</p>
-        </div>
-
-        <!-- Download Button (initially hidden) -->
-        <button
-            id="downloadBtn"
-            class="btn-secondary text-white font-semibold py-3 px-6 rounded-lg w-full hidden focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2"
-        >
-            Download QR Code
-        </button>
-
-        <!-- Message Box for alerts -->
-        <div id="messageBox" class="mt-4 p-3 bg-red-100 text-red-700 rounded-lg hidden" role="alert">
-            <p id="messageText"></p>
-        </div>
+  <body>
+    <!-- Loading Screen -->
+    <div id="loading">
+      <h2 class="text-2xl md:text-3xl font-bold">Booting...</h2>
+      <div id="loading-bar">
+        <div id="loading-bar-progress"></div>
+      </div>
+      <div id="loading-items" class="text-sm md:text-base">Starting...</div>
     </div>
 
-    <!-- QR Code Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode.js/1.0.0/qrcode.min.js"></script>
+    <!-- 3D WebGL Canvas -->
+    <canvas class="webgl"></canvas>
+
+    <!-- Hero Backup (visible if WebGL fails or initially) -->
+    <div id="hero-backup" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center text-primary-color z-10">
+      <h3 class="text-2xl md:text-3xl font-light">Hi there, I’m</h3>
+      <h1 class="text-6xl md:text-8xl font-extrabold">Ed</h1>
+      <ul class="list-none p-0 m-0 text-xl md:text-2xl font-medium">
+        <li>Software Engineer</li>
+        <li>Digital Designer</li>
+      </ul>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="fixed top-0 left-0 w-full flex justify-between items-center p-4 bg-white bg-opacity-90 backdrop-blur-sm shadow-md z-50 rounded-b-lg">
+      <div class="menu-btn flex items-center space-x-2">
+        <button class="btn p-2 rounded-lg bg-primary-color text-text-color transition-colors hover:bg-opacity-80 md:hidden" onclick="toggleMenu()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <rect y="3" width="24" height="3"></rect>
+            <rect y="10" width="24" height="3"></rect>
+            <rect y="17" width="24" height="3"></rect>
+          </svg>
+        </button>
+        <div class="flex space-x-2">
+          <a class="btn p-2 rounded-lg bg-primary-color text-text-color transition-colors hover:bg-opacity-80" href="https://www.linkedin.com/in/edwardhinrichsen/" target="_blank" aria-label="LinkedIn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20.447 20.447h-3.526v-5.592c0-1.33-.473-2.242-1.677-2.242-1.33 0-2.12.898-2.467 1.764-.13.31-.162.748-.162 1.186v4.884h-3.526s.046-9.617 0-10.609h3.526v1.503c.465-.72 1.306-1.748 3.17-1.748 2.31 0 4.044 1.517 4.044 4.753v6.098zM5.337 9.332a2.03 2.03 0 01-2.03-2.03c0-1.12.91-2.03 2.03-2.03s2.03.91 2.03 2.03c0 1.12-.91 2.03-2.03 2.03zm1.763 11.115h-3.526v-10.609h3.526v10.609z"></path>
+            </svg>
+          </a>
+          <a class="btn p-2 rounded-lg bg-primary-color text-text-color transition-colors hover:bg-opacity-80" href="https://bsky.app/profile/edh.dev/" target="_blank" aria-label="Bluesky">
+            <svg viewBox="0 0 64 57" width="20" height="17.76" fill="currentColor">
+              <path d="M13.873 3.805C21.21 9.332 29.103 20.537 32 26.55v15.882c0-.338-.13.044-.41.867-1.512 4.456-7.418 21.847-20.923 7.944-7.111-7.32-3.819-14.64 9.125-16.85-7.405 1.264-15.73-.825-18.014-9.015C1.12 23.022 0 8.51 0 6.55 0-3.268 8.579-.182 13.873 3.805ZM50.127 3.805C42.79 9.332 34.897 20.537 32 26.55v15.882c0-.338.13.044.41.867 1.512 4.456 7.418 21.847 20.923 7.944 7.111-7.32 3.819-14.64-9.125-16.85 7.405 1.264 15.73-.825 18.014-9.015C62.88 23.022 64 8.51 64 6.55c0-9.818-8.578-6.732-13.873-2.745Z"></path>
+            </svg>
+          </a>
+          <a class="btn p-2 rounded-lg bg-primary-color text-text-color transition-colors hover:bg-opacity-80" href="https://github.com/edhinrichsen/retro-computer-website" target="_blank" aria-label="GitHub">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.6.11 1.02-.26 1.02-.577v-2.234c-3.338.726-4.042-1.61-4.042-1.61-.542-1.372-1.328-1.739-1.328-1.739-1.087-.745.084-.729.084-.729 1.205.084 1.838 1.237 1.838 1.237 1.07 1.835 2.809 1.305 3.492.997.108-.775.418-1.305.762-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.382 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1-.322 3.3 1.235.96-.267 1.98-.399 3-.399s2.04.132 3 .399c2.295-1.557 3.295-1.235 3.295-1.235.645 1.653.24 2.873.105 3.176.77.838 1.235 1.91 1.235 3.22 0 4.61-2.801 5.62-5.471 5.922.429.369.812 1.101.812 2.219v3.293c0 .319.413.691 1.025.577C20.565 22.185 24 17.68 24 12c0-6.627-5.372-12-12-12z"></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="menu-body hidden md:flex md:space-x-4" onclick="closeMenu()">
+        <a class="text-text-color hover:text-primary-color transition-colors" href="#home">Home</a>
+        <a class="text-text-color hover:text-primary-color transition-colors" href="#aboutMe">About</a>
+        <a class="text-text-color hover:text-primary-color transition-colors" href="#projects">Projects</a>
+        <a class="text-text-color hover:text-primary-color transition-colors" href="#contact">Contact</a>
+      </div>
+
+      <div id="tip-scroll" class="hidden md:block fixed bottom-4 right-4 bg-gray-800 text-white px-4 py-2 rounded-lg text-sm z-40">Scroll ↓</div>
+    </nav>
+
+    <!-- Main Content Sections -->
+    <main class="relative z-10 pt-20">
+      <section id="aboutMe" class="max-w-4xl mx-auto p-8 bg-white rounded-xl shadow-lg my-8">
+        <h1 class="text-4xl font-bold mb-6 text-center text-secondary-color">Hi there</h1>
+        <p class="mb-4">
+          My name is Ed Hinrichsen, I’m an award-winning web dev / digital
+          designer and full stack software engineer. I have a passion for all
+          things technology and design, from software engineering & machine
+          learning to UI/UX & 3D graphics.
+        </p>
+        <p class="mb-4">
+          In addition to my love of technology and design, I am also interested
+          in education, history, economics and politics.
+        </p>
+        <p>
+          Below are details of some of the projects I have developed over my
+          fifteen plus years of coding experience.
+        </p>
+      </section>
+
+      <section id="projects" class="max-w-4xl mx-auto p-8 bg-white rounded-xl shadow-lg my-8">
+        <h1 class="text-4xl font-bold mb-6 text-center text-secondary-color">Projects</h1>
+        <hr class="border-t border-gray-200 my-8" />
+
+        <!-- Project: Page Buddy -->
+        <h2 class="text-3xl font-semibold mt-8 mb-2 text-secondary-color">Page Buddy</h2>
+        <h3 class="text-lg font-normal mb-4 text-gray-600">2023-24</h3>
+        <ul class="skills flex flex-wrap gap-2 mb-6">
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">React</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">TypeScript</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Gleam (Erlang)</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Sql</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">AI</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Web Dev</li>
+        </ul>
+        <p class="mb-4">
+          Page Buddy is a word processor, with everything you would expect from
+          WYSIWYG editor along with a novel drag and drop user interface and a
+          powerful style/theme engine. Additionally it provides: rich
+          accessibility tools, including, an embedded neural network (Wasm /
+          WebGPU) for auto complete, developed to help people with dyslexia
+          (like me) with their writing; and the ability for users to publish
+          their documents to the web.
+        </p>
+        <p class="mb-4">
+          Page Buddy is about 35K lines of code, it even has some users (~100
+          WAUs)!
+        </p>
+        <p><a href="https://pagebuddy.app" class="text-blue-600 hover:underline">pagebuddy.app</a></p>
+        <div class="image flex flex-col gap-4 mt-6 rounded-lg overflow-hidden">
+          <img src="https://placehold.co/1000x645/f6d4b1/000000?text=Page+Buddy+Screenshot+1" alt="Page Buddy screenshot" loading="lazy" class="w-full h-auto rounded-lg shadow-md" />
+        </div>
+        <hr class="border-t border-gray-200 my-8" />
+
+        <!-- Project: Folio (This Website) -->
+        <h2 class="text-3xl font-semibold mt-8 mb-2 text-secondary-color">Folio (This Website)</h2>
+        <h3 class="text-lg font-normal mb-4 text-gray-600">2022</h3>
+        <ul class="skills flex flex-wrap gap-2 mb-6">
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">TypeScript</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">WebGL</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Shader Language</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Web Dev</li>
+        </ul>
+        <p class="mb-4">
+          This was a project I built for fun over one of my uni breaks, built in
+          TypeScript and THREE.js, it contains a number of nifty features such
+          as: a 3D retro computer that you can interact with, a very simple UNIX
+          shell implementation, a files system implementation, markdown
+          interpreter and renderer, and a text layout engine.
+        </p>
+        <hr class="border-t border-gray-200 my-8" />
+
+        <!-- Project: Writing Buddy -->
+        <h2 class="text-3xl font-semibold mt-8 mb-2 text-secondary-color">Writing Buddy</h2>
+        <h3 class="text-lg font-normal mb-4 text-gray-600">2021</h3>
+        <ul class="skills flex flex-wrap gap-2 mb-6">
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">React</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">TypeScript</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">UI/UX</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Branding</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">AI</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Deep Learning</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Web Dev</li>
+        </ul>
+        <p class="mb-4">An early version of Page Buddy.</p>
+        <p class="mb-4">
+          I have dyslexia and as such, have always found writing and
+          particularly spelling difficult and tedious. While there are a number
+          of tools on the market designed to aid people with learning
+          difficulties, based on my experience, all fall short in one way or
+          another. To fix this I developed Writing Buddy, a “what you see is
+          what you get” text editor designed to help people write better, faster
+          and with more confidence.
+        </p>
+        <button
+          class="collapse-btn bg-primary-color text-text-color px-6 py-3 rounded-lg font-semibold transition-all hover:bg-opacity-80 block mx-auto my-4"
+          collapsed="true"
+          onclick="this.setAttribute('collapsed', this.getAttribute('collapsed') === 'true'? 'false' : 'true')"
+        >
+          more...
+        </button>
+
+        <div class="collapse-body transition-all duration-500 ease-out">
+          <p class="mb-4">
+            Writing Buddy is built on the principle that the best way to help
+            people who struggle with writing and spelling is to reduce the
+            amount of writing and spelling they actually have to do. I achieved
+            this by developing a state of the art custom prediction engine that
+            predicts the next word, dramatically decreasing the amount of words
+            that need to be typed. This has the additional benefit of appealing
+            to students and professionals who just want to express themselves
+            faster than otherwise possible.
+          </p>
+          <p>
+            Nearly every part and component of Writing Buddy is bespoke, with
+            everything from the UI/UX and branding to the prediction engine
+            designed and built by myself. The Writing Buddy editor is built in
+            TypeScript and React and the prediction engine is built with a
+            combination of deep learning and traditional computer science
+            techniques.
+          </p>
+        </div>
+
+        <div class="image flex flex-col gap-4 mt-6 rounded-lg overflow-hidden">
+          <img src="https://placehold.co/1000x695/f6d4b1/000000?text=Writing+Buddy+Screenshot+1" alt="Writing Buddy screenshot" class="w-full h-auto rounded-lg shadow-md" />
+          <img src="https://placehold.co/1000x468/f6d4b1/000000?text=Writing+Buddy+Screenshot+2" alt="Writing Buddy screenshot" loading="lazy" class="w-full h-auto rounded-lg shadow-md" />
+        </div>
+        <hr class="border-t border-gray-200 my-8" />
+
+        <!-- Project: My Own Programming Language -->
+        <h2 class="text-3xl font-semibold mt-8 mb-2 text-secondary-color">My Own Programming Language</h2>
+        <h3 class="text-lg font-normal mb-4 text-gray-600">2021</h3>
+        <ul class="skills flex flex-wrap gap-2 mb-6">
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Lexing & Tokenization</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Syntactic Analysis</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Parsing</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Compiler & Interpreter Design</li>
+        </ul>
+        <p class="mb-4">
+          For a while now I have been fascinated by computer languages and when
+          over the semester break, I had a bit of time on my hands, I decided
+          to—as an academic exercise—design my own language. My language
+          consists of two components; the recursive descent parser which first
+          lexers and tokenizes the input before generating an abstract syntax
+          tree (AST); and the interpreter which traverses the AST and produces
+          the appropriate output.
+        </p>
+        <p>
+          My language currently includes features such as closures, lambda
+          expressions, first class and pure functions, making it well-suited to
+          functional programming. In addition to this I plan to add support for
+          multithreading and a stronger type system plus optimizations for
+          tail-call recursion. I am also experimenting with implementing a stack
+          based virtual machine—bytecode interpreter—to run my language.
+        </p>
+        <hr class="border-t border-gray-200 my-8" />
+
+        <!-- Project: Glowbal -->
+        <h2 class="text-3xl font-semibold mt-8 mb-2 text-secondary-color">Glowbal</h2>
+        <h3 class="text-lg font-normal mb-4 text-gray-600">2020</h3>
+        <ul class="skills flex flex-wrap gap-2 mb-6">
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">React</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">TypeScript</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Design</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Accessibility</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">UI/UX</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Web Dev</li>
+        </ul>
+        <p class="mb-4">
+          As part of the university subject IT Project, I was required to
+          produce an ePortfolio web app as part of a small group. We called our
+          app Glowbal and built it with TypeScript, React, Express and employed
+          an agile development process. I was a front end lead and wrote most of
+          the UI components. I was also responsible for accessibility testing
+          and ensuring users of all abilities could access our app.
+        </p>
+        <div class="image flex flex-col gap-4 mt-6 rounded-lg overflow-hidden">
+          <video width="100%" controls loop autoplay muted class="w-full h-auto rounded-lg shadow-md">
+            <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        <hr class="border-t border-gray-200 my-8" />
+
+        <!-- Project: Cyber Heist -->
+        <h2 class="text-3xl font-semibold mt-8 mb-2 text-secondary-color">Cyber Heist</h2>
+        <h3 class="text-lg font-normal mb-4 text-gray-600">2020</h3>
+        <ul class="skills flex flex-wrap gap-2 mb-6">
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Shader Dev</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Design</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">User Testing</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Game Dev</li>
+        </ul>
+        <p class="mb-4">
+          For the subject Graphics and Interaction, I worked in a team to
+          produce a time based endless runner game called CyberHeist. The game
+          was built in Unity/C# and made use of a number of Azure APIs to add
+          online play functionality. I was responsible for most of the online
+          investigation and a large amount of the game logic, shader programming
+          and user testing. CyberHeist received a final mark of over 95% and the
+          trailer can be found below.
+        </p>
+        <div class="image flex flex-col gap-4 mt-6 rounded-lg overflow-hidden">
+          <iframe
+            class="w-full h-auto rounded-lg shadow-md aspect-video"
+            src="https://www.youtube.com/embed/LvVK7j2WmfU?controls=0"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
+        <hr class="border-t border-gray-200 my-8" />
+
+        <!-- Project: Pavilion -->
+        <h2 class="text-3xl font-semibold mt-8 mb-2 text-secondary-color">Pavilion</h2>
+        <h3 class="text-lg font-normal mb-4 text-gray-600">2019</h3>
+        <ul class="skills flex flex-wrap gap-2 mb-6">
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">VR</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">3D Rendering</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">3D Printing</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Parametric Design</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Architecture</li>
+        </ul>
+        <p class="mb-4">
+          At university, in addition to my computer science subjects, I
+          completed a number of architecture and design electives. In one of my
+          favourite architecture subjects we had to design and 3D print a
+          pavilion using parametric tools and present it in VR with Unreal
+          Engine. I programmatically modeled a magnetic field and extracted the
+          field lines to inform the structure of my pavilion. I enjoyed this
+          assignment so much I decided to extend myself and produce a number of
+          3D ray traced renders some of which are below. My design received
+          first class honors and was chosen to be exhibited in the prestigious
+          Melbourne School of Design annual exhibition (MSDx).
+        </p>
+        <div class="image flex flex-col gap-4 mt-6 rounded-lg overflow-hidden">
+          <img src="https://placehold.co/1000x562/f6d4b1/000000?text=Pavilion+Image+1" alt="Pavilion image" loading="lazy" class="w-full h-auto rounded-lg shadow-md" />
+          <img src="https://placehold.co/1000x562/f6d4b1/000000?text=Pavilion+Image+2" alt="Pavilion image" loading="lazy" class="w-full h-auto rounded-lg shadow-md" />
+        </div>
+        <hr class="border-t border-gray-200 my-8" />
+
+        <!-- Project: Brick Breaker -->
+        <h2 class="text-3xl font-semibold mt-8 mb-2 text-secondary-color">Brick Breaker</h2>
+        <h3 class="text-lg font-normal mb-4 text-gray-600">2019</h3>
+        <ul class="skills flex flex-wrap gap-2 mb-6">
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Software Engineering</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Object Oriented Design</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">GRASP & GoF Patterns</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Light Simulation</li>
+        </ul>
+        <p class="mb-4">
+          The below screenshot is of a university assignment, where we had to
+          follow a spec and use object oriented design principles and patterns
+          to produce a brick-breaker type game in Java. I finished with time to
+          spare so decided to implement a real time lighting and particle engine
+          from scratch. The engine was capable of handling different lights at
+          different intensities, intersecting shadows and a large number of
+          shadow casting game objects.
+        </p>
+        <div class="image flex flex-col gap-4 mt-6 rounded-lg overflow-hidden w-full max-w-xl mx-auto">
+          <img src="https://placehold.co/680x493/f6d4b1/000000?text=Brick+Breaker+Screenshot" alt="Brick Breaker screenshot" loading="lazy" class="w-full h-auto rounded-lg shadow-md" />
+        </div>
+        <hr class="border-t border-gray-200 my-8" />
+
+        <!-- Project: Jackalope -->
+        <h2 class="text-3xl font-semibold mt-8 mb-2 text-secondary-color">Jackalope</h2>
+        <h3 class="text-lg font-normal mb-4 text-gray-600">2017</h3>
+        <ul class="skills flex flex-wrap gap-2 mb-6">
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">3D Printing</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Industrial Design</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Visual Communication</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Branding</li>
+        </ul>
+        <p class="mb-4">
+          In my final year of high school I took a subject called Visual
+          Communication Design (VCD). As part of VCD we were given the
+          assignment to develop and fulfill a brief for a fictional client. I
+          gave myself the brief to design a series of smart home appliances for
+          the made up company Jackalope and produce accompanying visual identity
+          and advertising material. Below is a poster of a smart speakers I
+          designed with the Jackalope logo in the corner. See more of this
+          project on
+          <a
+            target="_blank"
+            href="https://www.behance.net/gallery/57165159/HomeHub-by-Jackalope"
+            class="text-blue-600 hover:underline"
+            ><u>Behance.</u></a
+          >
+        </p>
+        <div class="image flex flex-col gap-4 mt-6 rounded-lg overflow-hidden">
+          <img src="https://placehold.co/1000x560/f6d4b1/000000?text=Jackalope+Poster" alt="Jackalope poster" loading="lazy" class="w-full h-auto rounded-lg shadow-md" />
+        </div>
+        <hr class="border-t border-gray-200 my-8" />
+
+        <!-- Project: Project L -->
+        <h2 class="text-3xl font-semibold mt-8 mb-2 text-secondary-color">Project L</h2>
+        <h3 class="text-lg font-normal mb-4 text-gray-600">2015</h3>
+        <ul class="skills flex flex-wrap gap-2 mb-6">
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">VR</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Game Dev</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Design</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">3D</li>
+        </ul>
+        <p class="mb-4">
+          Over the years I have made many games, with the screenshot below
+          representing one of them from around 2015. Probably one of the more
+          technically challenging games I have created, it was an open world VR
+          sandbox written in Unity, where you could interact, move, rotate and
+          scale the objects in the world to build anything you wanted.
+        </p>
+        <div class="image flex flex-col gap-4 mt-6 rounded-lg overflow-hidden">
+          <img src="https://placehold.co/1000x623/f6d4b1/000000?text=Project+L+Screenshot+1" alt="Project L screenshot" class="w-full h-auto rounded-lg shadow-md" />
+          <img src="https://placehold.co/1000x623/f6d4b1/000000?text=Project+L+Screenshot+2" alt="Project L screenshot" loading="lazy" class="w-full h-auto rounded-lg shadow-md" />
+          <img src="https://placehold.co/1000x623/f6d4b1/000000?text=Project+L+Screenshot+3" alt="Project L screenshot" loading="lazy" class="w-full h-auto rounded-lg shadow-md" />
+        </div>
+        <hr class="border-t border-gray-200 my-8" />
+
+        <!-- Project: Great Balls of Fire -->
+        <h2 class="text-3xl font-semibold mt-8 mb-2 text-secondary-color">Great Balls of Fire</h2>
+        <h3 class="text-lg font-normal mb-4 text-gray-600">2013-14</h3>
+        <ul class="skills flex flex-wrap gap-2 mb-6">
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Mobile Dev</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Design</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Illustration</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Branding</li>
+        </ul>
+        <p class="mb-4">
+          Great Balls of Fire was a game I made when I was 13 years old and is
+          one of the creations I am most proud of. It was an endless scroller
+          where you played as the titular Ball of Fire, attempting to stay in
+          the sky by jumping on air ships. It was published on the App Store and
+          Play Store and remained there for a number of years (before I got
+          tired of paying Apple's developer fee) and even netted a few thousand
+          downloads.
+        </p>
+        <div class="image flex flex-col gap-4 mt-6 rounded-lg overflow-hidden">
+          <img src="https://placehold.co/1000x562/f6d4b1/000000?text=Great+Balls+of+Fire+Screenshot+1" alt="Great Balls of Fire screenshot" loading="lazy" class="w-full h-auto rounded-lg shadow-md" />
+          <img src="https://placehold.co/1000x562/f6d4b1/000000?text=Great+Balls+of+Fire+Screenshot+2" alt="Great Balls of Fire screenshot" loading="lazy" class="w-full h-auto rounded-lg shadow-md" />
+          <img src="https://placehold.co/1000x562/f6d4b1/000000?text=Great+Balls+of+Fire+Screenshot+3" alt="Great Balls of Fire screenshot" loading="lazy" class="w-full h-auto rounded-lg shadow-md" />
+          <iframe
+            class="w-full h-auto rounded-lg shadow-md aspect-video"
+            src="https://www.youtube.com/embed/N6mbNr0w39Y?controls=0"
+            title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
+        <hr class="border-t border-gray-200 my-8" />
+
+        <!-- Project: The Golden Pack -->
+        <h2 class="text-3xl font-semibold mt-8 mb-2 text-secondary-color">The Golden Pack</h2>
+        <h3 class="text-lg font-normal mb-4 text-gray-600">2012-13</h3>
+        <ul class="skills flex flex-wrap gap-2 mb-6">
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Design</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Illustration</li>
+        </ul>
+        <p class="mb-4">
+          When I was 12 years old, I played a lot of Minecraft however, I was
+          never very happy with the low resolution look of the game. I decided
+          to remedy this by creating a texture pack, which is a file containing
+          alternative looks or textures for the objects in the game. When I put
+          my work online, after some refinement I received my first 1000
+          downloads. Spotting a business opportunity, I added ads to the
+          download link. My texture pack was downloaded over 50,000 times,
+          earning me a few hundred dollars.
+        </p>
+        <div class="image flex flex-col gap-4 mt-6 rounded-lg overflow-hidden">
+          <img src="https://placehold.co/1000x750/f6d4b1/000000?text=The+Golden+Pack+Image" alt="The Golden Pack image" loading="lazy" class="w-full h-auto rounded-lg shadow-md" />
+        </div>
+        <hr class="border-t border-gray-200 my-8" />
+
+        <!-- Project: EdSites -->
+        <h2 class="text-3xl font-semibold mt-8 mb-2 text-secondary-color">EdSites</h2>
+        <h3 class="text-lg font-normal mb-4 text-gray-600">2010</h3>
+        <ul class="skills flex flex-wrap gap-2 mb-6">
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Design</li>
+          <li class="bg-primary-color px-3 py-1 rounded-md text-sm font-semibold">Web Dev</li>
+        </ul>
+        <p class="mb-4">
+          Below is one of my earliest creations dating back to 2010. As a
+          budding 10 year old web designer I needed a website to showcase my
+          work and attract “clients”, so I made one! I called it EdSites and
+          registered the domain name edsites.biz with my father’s credit card
+          and got to work. All the HTML, CSS and even the JavaScript was written
+          completely by hand by me. The website was such a success that it
+          resulted in some clients albeit they were all my family members.
+        </p>
+        <div class="image flex flex-col gap-4 mt-6 rounded-lg overflow-hidden">
+          <img src="https://placehold.co/1000x695/f6d4b1/000000?text=EdSites+Screenshot" alt="EdSites screenshot" loading="lazy" class="w-full h-auto rounded-lg shadow-md" />
+        </div>
+        <hr class="border-t border-gray-200 my-8" />
+
+        <p class="text-center text-gray-700">
+          This represents just a small selection of the projects I have worked
+          on over the years. I have many more pieces of personal, university and
+          design work.
+        </p>
+      </section>
+
+      <section id="contact" class="max-w-4xl mx-auto p-8 bg-white rounded-xl shadow-lg my-8">
+        <h1 class="text-4xl font-bold mb-6 text-center text-secondary-color">Contact</h1>
+        <p class="text-center text-lg">
+          Reach out on
+          <a href="https://www.linkedin.com/in/edwardhinrichsen/" class="text-blue-600 hover:underline font-bold"
+            ><u>LinkedIn</u></a
+          >
+        </p>
+      </section>
+    </main>
+
+    <!-- Placeholder for original textarea, purpose unclear but included -->
+    <input type="text" id="textarea" readonly class="hidden" />
+
+    <!-- Footer -->
+    <footer class="text-center p-8 mt-12 bg-secondary-color text-white text-sm rounded-t-xl">
+      <div class="mb-2">Developed + Designed by Ed Hinrichsen.</div>
+      <div class="mb-2">Computer design based on the Commodore PET 8296.</div>
+      <div class="mb-2">
+        Built on the traditional land of the Wurundjeri and Boon Wurrung peoples
+        of the Kulin nation. I pay my respect to Elders past, present and
+        emerging.
+      </div>
+      <div class="mb-2">
+        Sovereignty has never been ceded. It always was and always will be
+        Aboriginal land.
+      </div>
+      <div>COPYRIGHT © 2022-2024 Edward Hinrichsen.</div>
+    </footer>
+
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- webgl-helper.min.js (included as per original, but core 3D logic is standard Three.js) -->
+    <script src="https://cdn-ts.netlify.app/webgl-helper@3.0.11/webgl-helper.min.js"></script>
+    <!-- Google Analytics (as per original) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-EDNKHGV4HB"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-EDNKHGV4HB");
+      gtag("event", "origin", { name: window.origin });
+    </script>
 
     <script>
-        // Get references to DOM elements
-        const urlInput = document.getElementById('urlInput');
-        const generateBtn = document.getElementById('generateBtn');
-        const qrcodeDiv = document.getElementById('qrcode');
-        const qrPlaceholder = document.getElementById('qrPlaceholder');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const messageBox = document.getElementById('messageBox');
-        const messageText = document.getElementById('messageText');
+      // DOM Content Loaded: Ensure all HTML is parsed before running scripts
+      document.addEventListener('DOMContentLoaded', () => {
+        // --- Loading Screen Logic ---
+        const loadingScreen = document.getElementById('loading');
+        const loadingBarProgress = document.getElementById('loading-bar-progress');
+        const loadingItems = document.getElementById('loading-items');
+        const heroBackup = document.getElementById('hero-backup');
+        const webglCanvas = document.querySelector('.webgl');
 
-        let qrCodeInstance = null; // To store the QRCode.js instance
+        let loadingProgress = 0;
+        const loadingMessages = [
+          'Initializing...',
+          'Loading assets...',
+          'Compiling shaders...',
+          'Establishing connection...',
+          'Boot sequence complete.'
+        ];
+        let messageIndex = 0;
 
-        /**
-         * Displays a message in the message box.
-         * @param {string} message - The message to display.
-         * @param {string} type - The type of message ('success', 'error', 'info').
-         */
-        function showMessage(message, type = 'info') {
-            messageText.textContent = message;
-            messageBox.className = 'mt-4 p-3 rounded-lg'; // Reset classes
-            if (type === 'error') {
-                messageBox.classList.add('bg-red-100', 'text-red-700');
-            } else if (type === 'success') {
-                messageBox.classList.add('bg-green-100', 'text-green-700');
-            } else {
-                messageBox.classList.add('bg-blue-100', 'text-blue-700');
-            }
-            messageBox.classList.remove('hidden');
+        function updateLoadingScreen() {
+          loadingProgress += 20; // Increment by 20% for each message
+          loadingBarProgress.style.width = `${loadingProgress}%`;
+          if (messageIndex < loadingMessages.length) {
+            loadingItems.textContent = loadingMessages[messageIndex];
+            messageIndex++;
+          }
         }
 
-        /**
-         * Hides the message box.
-         */
-        function hideMessage() {
-            messageBox.classList.add('hidden');
-        }
+        // Simulate loading progress
+        const loadingInterval = setInterval(updateLoadingScreen, 500);
 
-        /**
-         * Generates the QR code based on the input URL.
-         */
-        generateBtn.addEventListener('click', () => {
-            const url = urlInput.value.trim();
+        // --- Navigation Menu Logic ---
+        const nav = document.getElementsByTagName('nav')[0];
 
-            // Clear previous QR code and hide download button
-            qrcodeDiv.innerHTML = '';
-            qrPlaceholder.classList.remove('hidden');
-            downloadBtn.classList.add('hidden');
-            hideMessage();
-
-            if (!url) {
-                showMessage('Please enter a URL to generate a QR code.', 'error');
-                return;
-            }
-
-            // Validate URL format (simple check)
-            try {
-                new URL(url); // Attempt to create a URL object to validate
-            } catch (e) {
-                showMessage('Please enter a valid URL (e.g., https://www.example.com).', 'error');
-                return;
-            }
-
-            qrPlaceholder.classList.add('hidden'); // Hide placeholder text
-
-            // Create new QRCode instance
-            // qrcode.js appends a canvas or img tag to the div
-            qrCodeInstance = new QRCode(qrcodeDiv, {
-                text: url,
-                width: 200,
-                height: 200,
-                colorDark : "#000000",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.H // High error correction
-            });
-
-            // Show download button after a small delay to ensure QR code is rendered
-            setTimeout(() => {
-                downloadBtn.classList.remove('hidden');
-            }, 100);
-        });
-
-        /**
-         * Downloads the generated QR code.
-         */
-        downloadBtn.addEventListener('click', () => {
-            if (qrCodeInstance) {
-                // qrcode.js generates a canvas element
-                const canvas = qrcodeDiv.querySelector('canvas');
-                if (canvas) {
-                    // Create a temporary link element
-                    const link = document.createElement('a');
-                    link.download = 'qrcode.png';
-                    link.href = canvas.toDataURL('image/png'); // Get data URL of the canvas
-                    document.body.appendChild(link); // Append to body to make it clickable
-                    link.click(); // Programmatically click the link
-                    document.body.removeChild(link); // Remove the link
-                    showMessage('QR code downloaded successfully!', 'success');
-                } else {
-                    showMessage('QR code not found for download. Please generate it first.', 'error');
-                }
+        window.toggleMenu = function() {
+          nav.classList.toggle('active');
+          // On mobile, if menu is open, hide scroll tip
+          if (window.innerWidth < 768) { // Tailwind's md breakpoint
+            const tipScroll = document.getElementById('tip-scroll');
+            if (nav.classList.contains('active')) {
+              tipScroll.classList.add('hidden');
             } else {
-                showMessage('No QR code generated yet.', 'error');
+              tipScroll.classList.remove('hidden');
             }
-        });
-
-        // Initialize on window load (though not strictly necessary for this simple app, good practice)
-        window.onload = () => {
-            // Any initial setup if needed
+          }
         };
+
+        window.closeMenu = function() {
+          nav.classList.remove('active');
+          if (window.innerWidth < 768) { // Tailwind's md breakpoint
+            document.getElementById('tip-scroll').classList.remove('hidden');
+          }
+        };
+
+        // Hide menu on resize if it's open and switches to desktop view
+        window.addEventListener('resize', () => {
+          if (window.innerWidth >= 768) {
+            nav.classList.remove('active');
+            document.getElementById('tip-scroll').classList.add('hidden'); // Always hidden on desktop
+          } else {
+            // On mobile, if menu is closed, show scroll tip
+            if (!nav.classList.contains('active')) {
+              document.getElementById('tip-scroll').classList.remove('hidden');
+            }
+          }
+        });
+
+        // Initial check for scroll tip visibility
+        if (window.innerWidth >= 768) {
+          document.getElementById('tip-scroll').classList.add('hidden');
+        } else {
+          document.getElementById('tip-scroll').classList.remove('hidden');
+        }
+
+
+        // --- Collapse Button Logic ---
+        document.querySelectorAll('.collapse-btn').forEach(button => {
+          button.addEventListener('click', () => {
+            const isCollapsed = button.getAttribute('collapsed') === 'true';
+            button.setAttribute('collapsed', !isCollapsed);
+            button.textContent = isCollapsed ? 'less...' : 'more...';
+          });
+        });
+
+        // --- Three.js for 3D Retro Computer ---
+        let scene, camera, renderer, computerMesh;
+        let mouseX = 0, mouseY = 0;
+        let targetX = 0, targetY = 0;
+        const windowHalfX = window.innerWidth / 2;
+        const windowHalfY = window.innerHeight / 2;
+
+        function initThreeJS() {
+          // 1. Scene
+          scene = new THREE.Scene();
+          scene.background = new THREE.Color(0x1a1a1a); // Dark background for retro feel
+
+          // 2. Camera
+          camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+          camera.position.z = 5;
+
+          // 3. Renderer
+          renderer = new THREE.WebGLRenderer({ canvas: webglCanvas, antialias: true });
+          renderer.setSize(window.innerWidth, window.innerHeight);
+          renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Optimize for device pixel ratio
+
+          // 4. Lights
+          const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // Soft white light
+          scene.add(ambientLight);
+          const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+          directionalLight.position.set(1, 1, 1).normalize();
+          scene.add(directionalLight);
+
+          // 5. Create a simple Retro Computer Model (using basic geometries)
+          // Main body
+          const bodyGeometry = new THREE.BoxGeometry(2.5, 1.5, 0.8);
+          const bodyMaterial = new THREE.MeshStandardMaterial({ color: 0x4a4a4a, metalness: 0.5, roughness: 0.5 });
+          const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+          body.position.set(0, 0.2, 0); // Lift slightly
+
+          // Screen
+          const screenGeometry = new THREE.BoxGeometry(2.0, 1.0, 0.1);
+          const screenMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00, emissive: 0x00ff00, emissiveIntensity: 0.2 }); // Green glow
+          const screen = new THREE.Mesh(screenGeometry, screenMaterial);
+          screen.position.set(0, 0.4, 0.4); // Position on top of the body
+
+          // Keyboard base
+          const keyboardGeometry = new THREE.BoxGeometry(2.2, 0.1, 0.6);
+          const keyboardMaterial = new THREE.MeshStandardMaterial({ color: 0x3a3a3a, metalness: 0.5, roughness: 0.5 });
+          const keyboard = new THREE.Mesh(keyboardGeometry, keyboardMaterial);
+          keyboard.position.set(0, -0.4, 0.4); // Position in front of the body
+
+          // Group them
+          computerMesh = new THREE.Group();
+          computerMesh.add(body);
+          computerMesh.add(screen);
+          computerMesh.add(keyboard);
+
+          scene.add(computerMesh);
+
+          // Initial rotation for a better view
+          computerMesh.rotation.y = Math.PI * 0.1;
+          computerMesh.rotation.x = Math.PI * 0.05;
+
+          // Event Listeners for mouse interaction
+          document.addEventListener('mousemove', onDocumentMouseMove);
+          document.addEventListener('touchmove', onDocumentTouchMove);
+          window.addEventListener('resize', onWindowResize);
+
+          // Hide hero backup and loading screen
+          heroBackup.classList.add('hidden');
+          loadingScreen.classList.add('hidden');
+
+          animate(); // Start the animation loop
+        }
+
+        function onDocumentMouseMove(event) {
+          mouseX = (event.clientX - windowHalfX) / 100;
+          mouseY = (event.clientY - windowHalfY) / 100;
+        }
+
+        function onDocumentTouchMove(event) {
+          if (event.touches.length === 1) {
+            event.preventDefault();
+            mouseX = (event.touches[0].pageX - windowHalfX) / 100;
+            mouseY = (event.touches[0].pageY - windowHalfY) / 100;
+          }
+        }
+
+        function onWindowResize() {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+          requestAnimationFrame(animate);
+
+          // Smoothly rotate the computer mesh based on mouse position
+          targetX = mouseX * 0.001;
+          targetY = mouseY * 0.001;
+
+          if (computerMesh) {
+            computerMesh.rotation.y += (targetX - computerMesh.rotation.y) * 0.05;
+            computerMesh.rotation.x += (targetY - computerMesh.rotation.x) * 0.05;
+          }
+
+          renderer.render(scene, camera);
+        }
+
+        // Delay the Three.js initialization to simulate loading time
+        setTimeout(() => {
+          clearInterval(loadingInterval); // Stop loading progress simulation
+          loadingBarProgress.style.width = '100%';
+          loadingItems.textContent = 'Ready!';
+          setTimeout(() => {
+            try {
+              initThreeJS(); // Attempt to initialize Three.js
+            } catch (e) {
+              console.error("Failed to initialize Three.js:", e);
+              // Fallback: Show hero backup if Three.js fails
+              heroBackup.classList.remove('hidden');
+              webglCanvas.classList.add('hidden'); // Hide canvas if it failed
+              loadingScreen.classList.add('hidden');
+            }
+          }, 500); // Short delay after 'Ready!'
+        }, loadingMessages.length * 500 + 500); // Total loading time + a bit more
+
+      }); // End DOMContentLoaded
     </script>
-</body>
+  </body>
 </html>
 
