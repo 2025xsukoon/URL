@@ -1,3 +1,4 @@
+Personal Profile - Version 2 (HTML)">
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,67 +13,142 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
-        /* Custom CSS for blob animation */
+        /* Custom CSS for fonts and base styles */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
         .font-inter {
             font-family: 'Inter', sans-serif;
         }
 
+        /* Hero Section Specific Styles and Animations */
+        .hero-glitch-container {
+            position: relative;
+            display: inline-block;
+            overflow: hidden;
+        }
+
+        .hero-glitch-text {
+            font-size: 5rem; /* Base size for glitch text */
+            font-weight: 900;
+            line-height: 1;
+            color: transparent; /* Text color handled by background-clip */
+            background-image: linear-gradient(to right, #6EE7B7, #34D399, #10B981); /* Green gradient */
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: text-reveal 1.5s ease-out forwards;
+            position: relative;
+            z-index: 2; /* Above glitch layers */
+        }
+
+        /* Glitch effect for hero text */
+        .hero-glitch-text::before,
+        .hero-glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(to right, #EC4899, #8B5CF6); /* Pink to Purple */
+            -webkit-background-clip: text;
+            background-clip: text;
+            z-index: 1;
+        }
+
+        .hero-glitch-text::before {
+            left: 2px;
+            text-shadow: -2px 0 #EC4899;
+            animation: glitch-anim-1 2s infinite alternate-reverse;
+        }
+
+        .hero-glitch-text::after {
+            left: -2px;
+            text-shadow: -2px 0 #8B5CF6;
+            animation: glitch-anim-2 2.5s infinite alternate-reverse;
+        }
+
+        @keyframes text-reveal {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes glitch-anim-1 {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        @keyframes glitch-anim-2 {
+            0% { transform: translate(0); }
+            25% { transform: translate(2px, -2px); }
+            50% { transform: translate(-2px, 2px); }
+            75% { transform: translate(2px, 2px); }
+            100% { transform: translate(0); }
+        }
+
+        /* Profile picture with fragmented effect */
+        .profile-fragment-container {
+            position: relative;
+            width: 160px; /* Adjusted size for the effect */
+            height: 160px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.6);
+            margin: 0 auto 2rem;
+            animation: profile-fade-in 1.5s ease-out forwards;
+            animation-delay: 0.5s;
+            opacity: 0;
+        }
+
+        .profile-fragment {
+            position: absolute;
+            background-size: cover;
+            background-position: center;
+            transition: all 0.3s ease-out;
+        }
+
+        /* Keyframes for initial profile fade-in */
+        @keyframes profile-fade-in {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Background blob animations */
         @keyframes blob {
-            0% {
-                transform: translate(0px, 0px) scale(1);
-            }
-            33% {
-                transform: translate(30px, -50px) scale(1.1);
-            }
-            66% {
-                transform: translate(-20px, 20px) scale(0.9);
-            }
-            100% {
-                transform: translate(0px, 0px) scale(1);
-            }
+            0% { transform: translate(0px, 0px) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0px, 0px) scale(1); }
         }
         .animate-blob {
             animation: blob 7s infinite cubic-bezier(0.68, -0.55, 0.27, 1.55);
         }
-        .animation-delay-2000 {
-            animation-delay: 2s;
-        }
-        .animation-delay-4000 {
-            animation-delay: 4s;
-        }
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
 
-        /* Animation for cards (slide up and fade in) */
+        /* General card animations (slide up and fade in) */
         @keyframes slideUpFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Initial state for cards that will animate */
         .interactive-card {
             position: relative;
-            background: rgba(15, 20, 30, 0.85); /* Darker, more opaque */
-            border: 1px solid rgba(139, 92, 246, 0.3); /* Slightly stronger border */
-            box-shadow: 0 0 15px rgba(139, 92, 246, 0.2); /* Stronger initial shadow */
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smoother transition */
+            background: rgba(15, 20, 30, 0.85);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             overflow: hidden;
-            /* Initial state for animation */
             opacity: 0;
             transform: translateY(50px);
         }
 
-        /* State when card is visible and animation should play */
         .interactive-card.is-visible {
             animation: slideUpFadeIn 0.7s ease-out forwards;
         }
 
-        /* Hover effects for interactive cards */
         .interactive-card:hover {
             transform: translateY(-5px) scale(1.02);
             box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
@@ -81,7 +157,7 @@
 
         /* Specific styles for action buttons */
         .interactive-card.contact-ceo-card {
-            background: linear-gradient(to right, #8B5CF6, #EC4899); /* Purple to Pink */
+            background: linear-gradient(to right, #8B5CF6, #EC4899);
             border: none;
             box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
             color: white;
@@ -91,7 +167,7 @@
         }
 
         .interactive-card.join-community-card {
-            background: linear-gradient(to right, #10B981, #34D399); /* Green */
+            background: linear-gradient(to right, #10B981, #34D399);
             border: none;
             box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
             color: white;
@@ -103,7 +179,7 @@
         /* Specific styles for feature cards */
         .legacy-card {
             background: rgba(20, 25, 35, 0.9);
-            border-color: rgba(251, 191, 36, 0.3); /* Amber border */
+            border-color: rgba(251, 191, 36, 0.3);
         }
         .legacy-card:hover {
             border-color: rgba(251, 191, 36, 0.6);
@@ -111,7 +187,7 @@
 
         .focused-card {
             background: rgba(20, 25, 35, 0.9);
-            border-color: rgba(96, 165, 250, 0.3); /* Blue border */
+            border-color: rgba(96, 165, 250, 0.3);
         }
         .focused-card:hover {
             border-color: rgba(96, 165, 250, 0.6);
@@ -119,7 +195,7 @@
 
         .uncharted-card {
             background: rgba(20, 25, 35, 0.9);
-            border-color: rgba(236, 72, 153, 0.3); /* Pink border */
+            border-color: rgba(236, 72, 153, 0.3);
         }
         .uncharted-card:hover {
             border-color: rgba(236, 72, 153, 0.6);
@@ -128,7 +204,7 @@
         /* Styles for message cards */
         .message-card {
             background: rgba(20, 25, 35, 0.9);
-            border-color: rgba(45, 212, 191, 0.3); /* Teal border */
+            border-color: rgba(45, 212, 191, 0.3);
         }
         .message-card:hover {
             border-color: rgba(45, 212, 191, 0.6);
@@ -144,7 +220,6 @@
         <nav class="hidden md:flex space-x-8">
             <a href="#message" class="text-lg hover:text-teal-400 transition-colors duration-300">Message</a>
             <a href="#legacy-section" class="text-lg hover:text-teal-400 transition-colors duration-300">Legacy</a>
-            <!-- Removed Contact link from header -->
         </nav>
         <button class="md:hidden p-2 rounded-lg hover:bg-gray-800 transition-colors duration-300">
             <!-- Hamburger Icon (Lucide icon equivalent) -->
@@ -152,7 +227,7 @@
         </button>
     </header>
 
-    <!-- Hero Section -->
+    <!-- Hero Section - Ultra Modernized -->
     <section id="hero" class="relative h-[calc(100vh-6rem)] flex items-center justify-center text-center p-6 md:p-12 overflow-hidden">
         <!-- Background gradient inspired by Simon Sparks -->
         <div class="absolute inset-0 bg-gradient-to-br from-blue-950 via-purple-950 to-gray-900 opacity-70"></div>
@@ -161,20 +236,15 @@
         <div class="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-60 h-60 md:w-80 md:h-80 bg-gradient-to-br from-teal-500 to-lime-600 rounded-full mix-blend-screen filter blur-3xl opacity-60 animate-blob animation-delay-2000"></div>
 
         <div class="relative z-10 max-w-4xl mx-auto">
-            <!-- Profile Picture -->
-            <div class="relative w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden shadow-2xl border-4 border-purple-500 mx-auto mb-6">
-                <!-- Replace this placeholder with your actual profile picture link -->
-                <img
-                    src="https://placehold.co/400x400/222/fff?text=SigmaDox"
-                    alt="SigmaDox Profile"
-                    class="w-full h-full object-cover"
-                    onerror="this.onerror=null; this.src='https://placehold.co/400x400/222/fff?text=Image+Error';"
-                />
+            <!-- Profile Picture with Fragmented Effect -->
+            <div id="profile-pic-container" class="profile-fragment-container">
+                <!-- JavaScript will dynamically create fragments here -->
             </div>
-            <h1 class="text-5xl md:text-7xl font-extrabold leading-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-purple-400">
+
+            <h1 class="hero-glitch-text text-5xl md:text-7xl lg:text-8xl font-extrabold leading-tight mb-6" data-text="𝑺𝒊𝒈𝒎𝒂𝑫𝒐𝒙 </>">
                 𝑺𝒊𝒈𝒎𝒂𝑫𝒐𝒙 </>
             </h1>
-            <p class="text-xl md:text-2xl text-gray-300 mb-10">
+            <p class="text-xl md:text-2xl text-gray-300 mb-10 opacity-0 animate-slide-up-fade-in" style="animation-delay: 1.8s;">
                 Building Communities, Embracing Growth, Charting New Paths.
             </p>
         </div>
@@ -254,6 +324,53 @@
     <script>
         // Initialize Lucide icons
         lucide.createIcons();
+
+        // Profile Picture Fragmented Effect
+        document.addEventListener('DOMContentLoaded', () => {
+            const profilePicContainer = document.getElementById('profile-pic-container');
+            const imageUrl = 'https://ibb.co/TBxpf6B'; // Your new profile picture link
+            const gridSize = 5; // 5x5 grid for fragments
+
+            if (profilePicContainer) {
+                // Create image element to get dimensions
+                const img = new Image();
+                img.src = imageUrl;
+                img.onload = () => {
+                    const containerSize = profilePicContainer.offsetWidth; // Should be 160px
+                    const fragmentSize = containerSize / gridSize;
+
+                    for (let i = 0; i < gridSize; i++) {
+                        for (let j = 0; j < gridSize; j++) {
+                            const fragment = document.createElement('div');
+                            fragment.classList.add('profile-fragment');
+                            fragment.style.width = `${fragmentSize}px`;
+                            fragment.style.height = `${fragmentSize}px`;
+                            fragment.style.left = `${j * fragmentSize}px`;
+                            fragment.style.top = `${i * fragmentSize}px`;
+                            fragment.style.backgroundImage = `url(${imageUrl})`;
+                            fragment.style.backgroundPosition = `-${j * fragmentSize}px -${i * fragmentSize}px`;
+                            profilePicContainer.appendChild(fragment);
+
+                            // Add subtle random movement on hover
+                            fragment.addEventListener('mouseover', () => {
+                                const randomX = (Math.random() - 0.5) * 20; // -10 to 10px
+                                const randomY = (Math.random() - 0.5) * 20; // -10 to 10px
+                                fragment.style.transform = `translate(${randomX}px, ${randomY}px) scale(1.1)`;
+                                fragment.style.zIndex = 10;
+                            });
+                            fragment.addEventListener('mouseout', () => {
+                                fragment.style.transform = 'translate(0, 0) scale(1)';
+                                fragment.style.zIndex = 1;
+                            });
+                        }
+                    }
+                };
+                img.onerror = () => {
+                    // Fallback if image fails to load
+                    profilePicContainer.innerHTML = `<img src="https://placehold.co/400x400/222/fff?text=Image+Error" alt="Profile Error" class="w-full h-full object-cover rounded-full" />`;
+                };
+            }
+        });
 
         // Intersection Observer for scroll-triggered animations
         document.addEventListener('DOMContentLoaded', () => {
