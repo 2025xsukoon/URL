@@ -1,4 +1,4 @@
-Personal Profile - Version 2 (HTML)">
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,16 +7,27 @@ Personal Profile - Version 2 (HTML)">
     <title>𝑺𝒊𝒈𝒎𝒂𝑫𝒐𝒙 </> - Personal Profile</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts - Inter -->
+    <!-- Google Fonts - Inter (for general text) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Google Fonts - Oswald (for bold, impactful titles) -->
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700;800;900&display=swap" rel="stylesheet">
     <!-- Lucide Icons (for general icons) -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
-        /* Custom CSS for fonts and base styles */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-        .font-inter {
-            font-family: 'Inter', sans-serif;
+        /* Base styles and fonts */
+        .font-inter { font-family: 'Inter', sans-serif; }
+        .font-oswald { font-family: 'Oswald', sans-serif; }
+
+        /* General Section Styling */
+        section {
+            padding: 5rem 1.5rem; /* py-20 px-6 */
+            max-width: 80rem; /* max-w-7xl */
+            margin-left: auto;
+            margin-right: auto;
+            border-radius: 0.75rem; /* rounded-xl */
+            margin-top: 3rem; /* my-12 */
+            margin-bottom: 3rem; /* my-12 */
         }
 
         /* Hero Section Specific Styles and Animations */
@@ -37,6 +48,7 @@ Personal Profile - Version 2 (HTML)">
             animation: text-reveal 1.5s ease-out forwards;
             position: relative;
             z-index: 2; /* Above glitch layers */
+            font-family: 'Oswald', sans-serif; /* Use Oswald for this bold text */
         }
 
         /* Glitch effect for hero text */
@@ -88,31 +100,41 @@ Personal Profile - Version 2 (HTML)">
             100% { transform: translate(0); }
         }
 
-        /* Profile picture with fragmented effect */
-        .profile-fragment-container {
+        /* Profile picture with fragmented effect (FRAMEUP inspired) */
+        .profile-frameup-container {
             position: relative;
-            width: 160px; /* Adjusted size for the effect */
-            height: 160px;
-            border-radius: 50%;
+            width: 200px; /* Larger base size */
+            height: 200px;
             overflow: hidden;
-            box-shadow: 0 0 30px rgba(139, 92, 246, 0.6);
+            background-color: #222; /* Dark background for fragments */
+            box-shadow: 0 0 40px rgba(255, 0, 0, 0.4); /* Red accent shadow */
             margin: 0 auto 2rem;
             animation: profile-fade-in 1.5s ease-out forwards;
             animation-delay: 0.5s;
             opacity: 0;
+            transform: rotate(-5deg); /* Slight rotation like FRAMEUP */
+            border: 2px solid #FF0000; /* Red border */
         }
 
-        .profile-fragment {
+        .profile-frameup-fragment {
             position: absolute;
             background-size: cover;
             background-position: center;
-            transition: all 0.3s ease-out;
+            transition: all 0.2s ease-out;
+            border: 1px solid rgba(255, 0, 0, 0.2); /* Subtle red border on fragments */
+        }
+
+        /* Hover effect for fragments */
+        .profile-frameup-fragment:hover {
+            transform: translate(var(--dx), var(--dy)) scale(1.1);
+            filter: brightness(1.2);
+            z-index: 10;
         }
 
         /* Keyframes for initial profile fade-in */
         @keyframes profile-fade-in {
-            from { opacity: 0; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1); }
+            from { opacity: 0; transform: scale(0.8) rotate(-5deg); }
+            to { opacity: 1; transform: scale(1) rotate(-5deg); }
         }
 
         /* Background blob animations */
@@ -136,9 +158,9 @@ Personal Profile - Version 2 (HTML)">
 
         .interactive-card {
             position: relative;
-            background: rgba(15, 20, 30, 0.85);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+            background: #111; /* Even darker background */
+            border: 1px solid rgba(255, 0, 0, 0.3); /* Red accent border */
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.1); /* Subtle red shadow */
             transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             overflow: hidden;
             opacity: 0;
@@ -151,93 +173,82 @@ Personal Profile - Version 2 (HTML)">
 
         .interactive-card:hover {
             transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
-            border-color: rgba(139, 92, 246, 0.6);
+            box-shadow: 0 10px 30px rgba(255, 0, 0, 0.4);
+            border-color: rgba(255, 0, 0, 0.6);
         }
 
         /* Specific styles for action buttons */
         .interactive-card.contact-ceo-card {
-            background: linear-gradient(to right, #8B5CF6, #EC4899);
+            background: #FF0000; /* Solid red */
             border: none;
-            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4);
             color: white;
+            font-family: 'Oswald', sans-serif;
         }
         .interactive-card.contact-ceo-card:hover {
-            background: linear-gradient(to right, #9F7AEA, #F472B6);
+            background: #CC0000; /* Darker red on hover */
         }
 
         .interactive-card.join-community-card {
-            background: linear-gradient(to right, #10B981, #34D399);
-            border: none;
-            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
-            color: white;
+            background: #333; /* Dark grey */
+            border: 1px solid #FF0000; /* Red border */
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.2);
+            color: #FF0000; /* Red text */
+            font-family: 'Oswald', sans-serif;
         }
         .interactive-card.join-community-card:hover {
-            background: linear-gradient(to right, #34D399, #6EE7B7);
+            background: #444;
+            color: white;
         }
 
         /* Specific styles for feature cards */
-        .legacy-card {
-            background: rgba(20, 25, 35, 0.9);
-            border-color: rgba(251, 191, 36, 0.3);
+        .legacy-card, .focused-card, .uncharted-card {
+            background: #111;
+            border-color: rgba(255, 0, 0, 0.3);
         }
-        .legacy-card:hover {
-            border-color: rgba(251, 191, 36, 0.6);
+        .legacy-card:hover, .focused-card:hover, .uncharted-card:hover {
+            border-color: rgba(255, 0, 0, 0.6);
         }
-
-        .focused-card {
-            background: rgba(20, 25, 35, 0.9);
-            border-color: rgba(96, 165, 250, 0.3);
+        .legacy-card svg, .focused-card svg, .uncharted-card svg {
+            color: #FF0000; /* All icons red */
         }
-        .focused-card:hover {
-            border-color: rgba(96, 165, 250, 0.6);
-        }
-
-        .uncharted-card {
-            background: rgba(20, 25, 35, 0.9);
-            border-color: rgba(236, 72, 153, 0.3);
-        }
-        .uncharted-card:hover {
-            border-color: rgba(236, 72, 153, 0.6);
+        .legacy-card span, .focused-card span, .uncharted-card span {
+            font-family: 'Oswald', sans-serif; /* Bold font for titles */
+            color: #FF0000; /* Red text for titles */
         }
 
         /* Styles for message cards */
         .message-card {
-            background: rgba(20, 25, 35, 0.9);
-            border-color: rgba(45, 212, 191, 0.3);
+            background: #111;
+            border-color: rgba(255, 0, 0, 0.3);
         }
         .message-card:hover {
-            border-color: rgba(45, 212, 191, 0.6);
+            border-color: rgba(255, 0, 0, 0.6);
+        }
+        .message-card h3 {
+            font-family: 'Oswald', sans-serif;
+            color: #FF0000; /* Red text for message card titles */
+        }
+
+        /* Footer specific styling */
+        footer {
+            background: #111; /* Darker footer */
+            border-top: 1px solid rgba(255, 0, 0, 0.2); /* Subtle red border top */
         }
     </style>
 </head>
 <body class="min-h-screen bg-gray-900 text-gray-100 font-inter">
-    <!-- Header -->
-    <header class="py-4 px-6 md:px-12 flex justify-between items-center bg-gray-950 shadow-lg rounded-b-xl">
-        <div class="text-2xl font-bold text-teal-400">
-            <a href="#" class="hover:text-teal-300 transition-colors duration-300">𝑺𝒊𝒈𝒎𝒂𝑫𝒐𝒙 </></a>
-        </div>
-        <nav class="hidden md:flex space-x-8">
-            <a href="#message" class="text-lg hover:text-teal-400 transition-colors duration-300">Message</a>
-            <a href="#legacy-section" class="text-lg hover:text-teal-400 transition-colors duration-300">Legacy</a>
-        </nav>
-        <button class="md:hidden p-2 rounded-lg hover:bg-gray-800 transition-colors duration-300">
-            <!-- Hamburger Icon (Lucide icon equivalent) -->
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
-        </button>
-    </header>
-
-    <!-- Hero Section - Ultra Modernized -->
-    <section id="hero" class="relative h-[calc(100vh-6rem)] flex items-center justify-center text-center p-6 md:p-12 overflow-hidden">
-        <!-- Background gradient inspired by Simon Sparks -->
-        <div class="absolute inset-0 bg-gradient-to-br from-blue-950 via-purple-950 to-gray-900 opacity-70"></div>
-        <!-- Abstract 3D element placeholder inspired by Simon Sparks -->
-        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 md:w-96 md:h-96 bg-gradient-to-br from-pink-500 to-orange-600 rounded-full mix-blend-screen filter blur-3xl opacity-60 animate-blob"></div>
-        <div class="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-60 h-60 md:w-80 md:h-80 bg-gradient-to-br from-teal-500 to-lime-600 rounded-full mix-blend-screen filter blur-3xl opacity-60 animate-blob animation-delay-2000"></div>
+    <!-- Hero Section - Ultra Modernized (FRAMEUP Inspired) -->
+    <section id="hero" class="relative min-h-screen flex items-center justify-center text-center p-6 md:p-12 overflow-hidden bg-gray-950">
+        <!-- Background gradient inspired by Simon Sparks (toned down for FRAMEUP) -->
+        <div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-950 opacity-70"></div>
+        <!-- Abstract 3D element placeholder (toned down) -->
+        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 md:w-96 md:h-96 bg-red-600 rounded-full mix-blend-screen filter blur-3xl opacity-30 animate-blob"></div>
+        <div class="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-60 h-60 md:w-80 md:h-80 bg-red-600 rounded-full mix-blend-screen filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
 
         <div class="relative z-10 max-w-4xl mx-auto">
             <!-- Profile Picture with Fragmented Effect -->
-            <div id="profile-pic-container" class="profile-fragment-container">
+            <div id="profile-pic-container" class="profile-frameup-container">
                 <!-- JavaScript will dynamically create fragments here -->
             </div>
 
@@ -250,73 +261,76 @@ Personal Profile - Version 2 (HTML)">
         </div>
     </section>
 
-    <!-- Action Buttons Section -->
-    <section class="py-20 px-6 md:px-12 bg-gray-950 rounded-xl mx-auto my-12 max-w-7xl">
-        <div class="mt-14 flex flex-col md:flex-row justify-center gap-8">
-            <a href="https://t.me/SigmaDox7" target="_blank" rel="noopener noreferrer" class="interactive-card contact-ceo-card flex-1 min-w-[220px] text-center py-5 px-8 rounded-xl cursor-pointer font-bold text-xl transition-colors duration-300 transform hover:scale-105" style="animation-delay: 0.1s;">
-                CONTACT CEO
-            </a>
-            <a href="https://t.me/+7OoCk9Y1x_s5YjJl" target="_blank" rel="noopener noreferrer" class="interactive-card join-community-card flex-1 min-w-[220px] text-center py-5 px-8 rounded-xl cursor-pointer font-bold text-xl transition-colors duration-300 transform hover:scale-105" style="animation-delay: 0.2s;">
-                JOIN COMMUNITY
-            </a>
-        </div>
-
-        <!-- Feature Cards Section -->
-        <div id="legacy-section" class="mt-14 grid grid-cols-1 md:grid-cols-3 gap-8">
-            <!-- Legacy Built Card -->
-            <div class="interactive-card legacy-card flex flex-col items-center p-7 rounded-xl text-center" style="animation-delay: 0.3s;">
-                <svg class="w-14 h-14 text-amber-400 mb-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15.546c-.523 0-1.046.11-1.535.331A9.752 9.752 0 0012 21a9.753 9.753 0 00-7.465-3.123 1.99 1.99 0 01-1.535-.331C2 15.546 2 14.656 2 12c0-2.757 1.293-5.232 3.376-6.843A12.001 12.001 0 0012 2c2.757 0 5.232 1.293 6.843 3.376A12.001 12.001 0 0022 12c0 2.656 0 3.546-1 3.546zM12 11V3"></path>
-                </svg>
-                <span class="text-2xl font-semibold text-gray-200 tracking-wide">LEGACY BUILT</span>
-                <p class="text-sm text-gray-400 mt-3">5+ Years of Community Building & 10K+ Subscribers Impacted</p>
-            </div>
-
-            <!-- Focused Future Card -->
-            <div class="interactive-card focused-card flex flex-col items-center p-7 rounded-xl text-center" style="animation-delay: 0.4s;">
-                <svg class="w-14 h-14 text-blue-400 mb-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-                </svg>
-                <span class="text-2xl font-semibold text-gray-200 tracking-wide">FOCUSED FUTURE</span>
-                <p class="text-sm text-gray-400 mt-3">Academic Pursuit & Personal Growth</p>
-            </div>
-
-            <!-- Uncharted Paths Card -->
-            <div class="interactive-card uncharted-card flex flex-col items-center p-7 rounded-xl text-center" style="animation-delay: 0.5s;">
-                <svg class="w-14 h-14 text-pink-400 mb-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M10 20.547a9.001 9.001 0 01-5-8.411V7a2 2 0 012-2h10a2 2 0 012 2v5.136a9.001 9.001 0 01-5 8.411m0 0V21"></path>
-                </svg>
-                <span class="text-2xl font-semibold text-gray-200 tracking-wide">UNCHARTED PATHS</span>
-                <p class="text-sm text-gray-400 mt-3">Embracing New Aspirations & Opportunities</p>
-            </div>
-        </div>
-    </section>
-
     <!-- Message Section -->
-    <section id="message" class="py-20 px-6 md:px-12 bg-gray-800 rounded-xl mx-auto my-12 max-w-7xl">
-        <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 text-teal-400">A Message from 𝑺𝒊𝒈𝒎𝒂𝑫𝒐𝒙</h2>
+    <section id="message" class="bg-gray-800">
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 text-red-600 font-oswald">A MESSAGE FROM 𝑺𝒊𝒈𝒎𝒂𝑫𝒐𝒙</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="interactive-card message-card p-8 rounded-xl shadow-xl" style="animation-delay: 0.6s;">
-                <h3 class="text-2xl font-semibold mb-4 text-white">A New Chapter Begins</h3>
+            <div class="interactive-card message-card p-8 rounded-xl shadow-xl" style="animation-delay: 0.1s;">
+                <h3 class="text-2xl font-semibold mb-4 text-white font-oswald">A NEW CHAPTER BEGINS</h3>
                 <p class="text-gray-300 leading-relaxed">Dear Community, I’m writing today with a deep sense of gratitude and a clear sense of purpose. As I transition into the next chapter of my academic journey—motivated by my recent Class 12 results—I've made the important decision to temporarily step back from social media, including Telegram and Instagram, to fully focus on higher education and personal growth.</p>
             </div>
-            <div class="interactive-card message-card p-8 rounded-xl shadow-xl" style="animation-delay: 0.7s;">
-                <h3 class="text-2xl font-semibold mb-4 text-white">My Digital Journey</h3>
+            <div class="interactive-card message-card p-8 rounded-xl shadow-xl" style="animation-delay: 0.2s;">
+                <h3 class="text-2xl font-semibold mb-4 text-white font-oswald">MY DIGITAL JOURNEY</h3>
                 <p class="text-gray-300 leading-relaxed">Since 2019, my digital journey has been filled with meaningful experiences. From building multiple Telegram communities—including one that reached over 10,000 subscribers—to currently managing an active 3,000-member group, this path has been both fulfilling and inspiring. These platforms have allowed for knowledge sharing, connection, and collaboration. However, their constant presence has also become a distraction from the level of focus my academic goals now demand.</p>
             </div>
-            <div class="interactive-card message-card p-8 rounded-xl shadow-xl" style="animation-delay: 0.8s;">
-                <h3 class="text-2xl font-semibold mb-4 text-white">A Conscious Pause</h3>
+            <div class="interactive-card message-card p-8 rounded-xl shadow-xl" style="animation-delay: 0.3s;">
+                <h3 class="text-2xl font-semibold mb-4 text-white font-oswald">A CONSCIOUS PAUSE</h3>
                 <p class="text-gray-300 leading-relaxed">This is not a goodbye—rather, it is a conscious pause. A step back to step forward. While I may return in the future under a new light, for now, my energy must be directed toward growth, learning, and achieving new heights.</p>
             </div>
-            <div class="interactive-card message-card p-8 rounded-xl shadow-xl" style="animation-delay: 0.9s;">
-                <h3 class="text-2xl font-semibold mb-4 text-white">Gratitude & Farewell</h3>
+            <div class="interactive-card message-card p-8 rounded-xl shadow-xl" style="animation-delay: 0.4s;">
+                <h3 class="text-2xl font-semibold mb-4 text-white font-oswald">GRATITUDE & FAREWELL</h3>
                 <p class="text-gray-300 leading-relaxed">To everyone who has been a part of this journey: thank you. Your support, ideas, and presence have meant a great deal to me. I wish you all continued success and fulfillment in your own endeavors. Warm regards, ⌁ 𝑺𝒊𝒈𝒎𝒂𝑫𝒐𝒙</p>
             </div>
         </div>
     </section>
 
+    <!-- Action Buttons Section -->
+    <section class="bg-gray-950">
+        <div class="mt-14 flex flex-col md:flex-row justify-center gap-8">
+            <a href="https://t.me/SigmaDox7" target="_blank" rel="noopener noreferrer" class="interactive-card contact-ceo-card flex-1 min-w-[220px] text-center py-5 px-8 rounded-xl cursor-pointer font-bold text-xl transition-colors duration-300 transform hover:scale-105" style="animation-delay: 0.5s;">
+                CONTACT CEO
+            </a>
+            <a href="https://t.me/+7OoCk9Y1x_s5YjJl" target="_blank" rel="noopener noreferrer" class="interactive-card join-community-card flex-1 min-w-[220px] text-center py-5 px-8 rounded-xl cursor-pointer font-bold text-xl transition-colors duration-300 transform hover:scale-105" style="animation-delay: 0.6s;">
+                JOIN COMMUNITY
+            </a>
+        </div>
+    </section>
+
+    <!-- Feature Cards Section -->
+    <section id="legacy-section" class="bg-gray-800">
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 text-red-600 font-oswald">MY JOURNEY & FUTURE</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Legacy Built Card -->
+            <div class="interactive-card legacy-card flex flex-col items-center p-7 rounded-xl text-center" style="animation-delay: 0.7s;">
+                <svg class="w-14 h-14 mb-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15.546c-.523 0-1.046.11-1.535.331A9.752 9.752 0 0012 21a9.753 9.753 0 00-7.465-3.123 1.99 1.99 0 01-1.535-.331C2 15.546 2 14.656 2 12c0-2.757 1.293-5.232 3.376-6.843A12.001 12.001 0 0012 2c2.757 0 5.232 1.293 6.843 3.376A12.001 12.001 0 0022 12c0 2.656 0 3.546-1 3.546zM12 11V3"></path>
+                </svg>
+                <span class="text-2xl font-semibold tracking-wide">LEGACY BUILT</span>
+                <p class="text-sm text-gray-400 mt-3">5+ Years of Community Building & 10K+ Subscribers Impacted</p>
+            </div>
+
+            <!-- Focused Future Card -->
+            <div class="interactive-card focused-card flex flex-col items-center p-7 rounded-xl text-center" style="animation-delay: 0.8s;">
+                <svg class="w-14 h-14 mb-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                </svg>
+                <span class="text-2xl font-semibold tracking-wide">FOCUSED FUTURE</span>
+                <p class="text-sm text-gray-400 mt-3">Academic Pursuit & Personal Growth</p>
+            </div>
+
+            <!-- Uncharted Paths Card -->
+            <div class="interactive-card uncharted-card flex flex-col items-center p-7 rounded-xl text-center" style="animation-delay: 0.9s;">
+                <svg class="w-14 h-14 mb-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M10 20.547a9.001 9.001 0 01-5-8.411V7a2 2 0 012-2h10a2 2 0 012 2v5.136a9.001 9.001 0 01-5 8.411m0 0V21"></path>
+                </svg>
+                <span class="text-2xl font-semibold tracking-wide">UNCHARTED PATHS</span>
+                <p class="text-sm text-gray-400 mt-3">Embracing New Aspirations & Opportunities</p>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
-    <footer class="py-8 px-6 md:px-12 bg-gray-950 text-center text-gray-400 rounded-t-xl">
+    <footer class="py-8 px-6 md:px-12 text-center text-gray-400 rounded-t-xl bg-gray-950">
         <p class="mb-2">&copy; 2025 𝑺𝒊𝒈𝒎𝒂𝑫𝒐𝒙 </>. All rights reserved.</p>
         <p class="text-sm">Crafted with precision for a digital future.</p>
     </footer>
@@ -325,49 +339,47 @@ Personal Profile - Version 2 (HTML)">
         // Initialize Lucide icons
         lucide.createIcons();
 
-        // Profile Picture Fragmented Effect
+        // Profile Picture Fragmented Effect (FRAMEUP Inspired)
         document.addEventListener('DOMContentLoaded', () => {
             const profilePicContainer = document.getElementById('profile-pic-container');
-            const imageUrl = 'https://ibb.co/TBxpf6B'; // Your new profile picture link
-            const gridSize = 5; // 5x5 grid for fragments
+            // IMPORTANT: Use a direct image URL. If 'https://ibb.co/TBxpf6B' is not direct,
+            // right-click the image on ibb.co and select "Copy image address".
+            const imageUrl = 'https://i.ibb.co/TBxpf6B/image.png'; // Updated to likely direct link
+            const gridSize = 4; // 4x4 grid for fragments (fewer, larger fragments)
 
             if (profilePicContainer) {
-                // Create image element to get dimensions
                 const img = new Image();
                 img.src = imageUrl;
                 img.onload = () => {
-                    const containerSize = profilePicContainer.offsetWidth; // Should be 160px
+                    const containerSize = profilePicContainer.offsetWidth;
                     const fragmentSize = containerSize / gridSize;
 
                     for (let i = 0; i < gridSize; i++) {
                         for (let j = 0; j < gridSize; j++) {
                             const fragment = document.createElement('div');
-                            fragment.classList.add('profile-fragment');
+                            fragment.classList.add('profile-frameup-fragment');
                             fragment.style.width = `${fragmentSize}px`;
                             fragment.style.height = `${fragmentSize}px`;
                             fragment.style.left = `${j * fragmentSize}px`;
                             fragment.style.top = `${i * fragmentSize}px`;
                             fragment.style.backgroundImage = `url(${imageUrl})`;
                             fragment.style.backgroundPosition = `-${j * fragmentSize}px -${i * fragmentSize}px`;
-                            profilePicContainer.appendChild(fragment);
 
-                            // Add subtle random movement on hover
-                            fragment.addEventListener('mouseover', () => {
-                                const randomX = (Math.random() - 0.5) * 20; // -10 to 10px
-                                const randomY = (Math.random() - 0.5) * 20; // -10 to 10px
-                                fragment.style.transform = `translate(${randomX}px, ${randomY}px) scale(1.1)`;
-                                fragment.style.zIndex = 10;
-                            });
-                            fragment.addEventListener('mouseout', () => {
-                                fragment.style.transform = 'translate(0, 0) scale(1)';
-                                fragment.style.zIndex = 1;
-                            });
+                            // Random offsets for hover effect
+                            const randomX = (Math.random() - 0.5) * 15; // -7.5 to 7.5px
+                            const randomY = (Math.random() - 0.5) * 15; // -7.5 to 7.5px
+                            fragment.style.setProperty('--dx', `${randomX}px`);
+                            fragment.style.setProperty('--dy', `${randomY}px`);
+
+                            profilePicContainer.appendChild(fragment);
                         }
                     }
                 };
                 img.onerror = () => {
                     // Fallback if image fails to load
-                    profilePicContainer.innerHTML = `<img src="https://placehold.co/400x400/222/fff?text=Image+Error" alt="Profile Error" class="w-full h-full object-cover rounded-full" />`;
+                    profilePicContainer.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gray-700 text-red-500 text-xs font-bold">IMAGE ERROR: CHECK URL</div>`;
+                    profilePicContainer.style.boxShadow = '0 0 20px rgba(255, 0, 0, 0.8)';
+                    profilePicContainer.style.border = '2px dashed red';
                 };
             }
         });
