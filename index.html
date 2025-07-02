@@ -9,307 +9,294 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts - Inter (for general text) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- Google Fonts - Oswald (for bold, impactful titles) -->
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700;800;900&display=swap" rel="stylesheet">
+    <!-- Google Fonts - Montserrat (for bold, impactful titles - more elegant than Oswald) -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
     <!-- Lucide Icons (for general icons) -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
         /* Base styles and fonts */
+        body {
+            background-color: #0A0A0A; /* Deepest dark background */
+            color: #E0E0E0; /* Soft white text */
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden; /* Prevent horizontal scroll from animations */
+        }
+        .font-montserrat { font-family: 'Montserrat', sans-serif; }
         .font-inter { font-family: 'Inter', sans-serif; }
-        .font-oswald { font-family: 'Oswald', sans-serif; }
 
         /* General Section Styling */
         section {
-            padding: 5rem 1.5rem; /* py-20 px-6 */
+            padding: 6rem 1.5rem; /* py-24 px-6 */
             max-width: 80rem; /* max-w-7xl */
             margin-left: auto;
             margin-right: auto;
-            border-radius: 0.75rem; /* rounded-xl */
-            margin-top: 3rem; /* my-12 */
-            margin-bottom: 3rem; /* my-12 */
+            position: relative; /* For background effects */
+            z-index: 10;
         }
 
         /* Hero Section Specific Styles and Animations */
-        .hero-glitch-container {
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: linear-gradient(180deg, #0A0A0A 0%, #1A1A1A 100%);
             position: relative;
-            display: inline-block;
             overflow: hidden;
         }
 
-        .hero-glitch-text {
-            font-size: 5rem; /* Base size for glitch text */
-            font-weight: 900;
-            line-height: 1;
-            color: transparent; /* Text color handled by background-clip */
-            background-image: linear-gradient(to right, #6EE7B7, #34D399, #10B981); /* Green gradient */
-            -webkit-background-clip: text;
-            background-clip: text;
-            animation: text-reveal 1.5s ease-out forwards;
-            position: relative;
-            z-index: 2; /* Above glitch layers */
-            font-family: 'Oswald', sans-serif; /* Use Oswald for this bold text */
-        }
-
-        /* Glitch effect for hero text */
-        .hero-glitch-text::before,
-        .hero-glitch-text::after {
-            content: attr(data-text);
+        /* Subtle grid background pattern */
+        .hero-section::before {
+            content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: linear-gradient(to right, #EC4899, #8B5CF6); /* Pink to Purple */
-            -webkit-background-clip: text;
-            background-clip: text;
+            background-image: radial-gradient(#222 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.1;
             z-index: 1;
         }
 
-        .hero-glitch-text::before {
-            left: 2px;
-            text-shadow: -2px 0 #EC4899;
-            animation: glitch-anim-1 2s infinite alternate-reverse;
-        }
-
-        .hero-glitch-text::after {
-            left: -2px;
-            text-shadow: -2px 0 #8B5CF6;
-            animation: glitch-anim-2 2.5s infinite alternate-reverse;
-        }
-
-        @keyframes text-reveal {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes glitch-anim-1 {
-            0% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(-2px, -2px); }
-            60% { transform: translate(2px, 2px); }
-            80% { transform: translate(2px, -2px); }
-            100% { transform: translate(0); }
-        }
-
-        @keyframes glitch-anim-2 {
-            0% { transform: translate(0); }
-            25% { transform: translate(2px, -2px); }
-            50% { transform: translate(-2px, 2px); }
-            75% { transform: translate(2px, 2px); }
-            100% { transform: translate(0); }
-        }
-
-        /* Circular profile picture */
-        .profile-circular-container {
+        .hero-content {
             position: relative;
-            width: 160px; /* Adjusted size */
-            height: 160px;
+            z-index: 20;
+            max-width: 48rem; /* Increased max-width for content */
+        }
+
+        /* Profile picture with glowing border */
+        .profile-glow-container {
+            width: 180px;
+            height: 180px;
             border-radius: 50%;
             overflow: hidden;
-            box-shadow: 0 0 30px rgba(139, 92, 246, 0.6); /* Purple shadow */
-            margin: 0 auto 2rem;
+            margin: 0 auto 2.5rem;
+            position: relative;
+            box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.05); /* Subtle outer ring */
             animation: profile-fade-in 1.5s ease-out forwards;
-            animation-delay: 0.5s;
+            animation-delay: 0.3s;
             opacity: 0;
-            border: 4px solid #8B5CF6; /* Purple border */
         }
 
-        .profile-circular-container img {
+        .profile-glow-container::before {
+            content: '';
+            position: absolute;
+            inset: -5px; /* Creates the border effect */
+            border-radius: 50%;
+            background: conic-gradient(from 0deg at 50% 50%, #00C6FF, #928DFF, #FF6B6B, #FFD166, #00C6FF); /* Rainbow gradient */
+            animation: rotate-border 4s linear infinite;
+            z-index: -1;
+        }
+
+        .profile-glow-container img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            border-radius: 50%; /* Ensure image is circular */
         }
 
-        /* Keyframes for initial profile fade-in */
+        @keyframes rotate-border {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
         @keyframes profile-fade-in {
-            from { opacity: 0; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1); }
+            from { opacity: 0; transform: scale(0.8) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        /* Background blob animations */
-        @keyframes blob {
-            0% { transform: translate(0px, 0px) scale(1); }
-            33% { transform: translate(30px, -50px) scale(1.1); }
-            66% { transform: translate(-20px, 20px) scale(0.9); }
-            100% { transform: translate(0px, 0px) scale(1); }
+        /* Main Title Animation (Elegant Reveal) */
+        .hero-title {
+            font-size: 4.5rem; /* text-7xl */
+            line-height: 1.1;
+            font-weight: 900;
+            color: transparent;
+            background-clip: text;
+            -webkit-background-clip: text;
+            background-image: linear-gradient(45deg, #00C6FF, #928DFF); /* Blue to Purple */
+            animation: text-clip-reveal 1.5s ease-out forwards;
+            animation-delay: 0.8s;
+            opacity: 0;
+            transform: translateY(20px);
         }
-        .animate-blob {
-            animation: blob 7s infinite cubic-bezier(0.68, -0.55, 0.27, 1.55);
-        }
-        .animation-delay-2000 { animation-delay: 2s; }
-        .animation-delay-4000 { animation-delay: 4s; }
 
-        /* General card animations (slide up and fade in) */
-        @keyframes slideUpFadeIn {
-            from { opacity: 0; transform: translateY(50px); }
+        @keyframes text-clip-reveal {
+            from { opacity: 0; transform: translateY(20px); filter: blur(5px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+
+        /* Subtitle Animation */
+        .hero-subtitle {
+            font-size: 1.5rem; /* text-2xl */
+            color: #B0B0B0;
+            margin-top: 1.5rem;
+            animation: slide-up-fade-in 1.5s ease-out forwards;
+            animation-delay: 1.2s;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        /* General Card Styles and Animations */
+        @keyframes slide-up-fade-in {
+            from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .interactive-card {
-            position: relative;
-            background: rgba(15, 20, 30, 0.85); /* Darker, more opaque */
-            border: 1px solid rgba(139, 92, 246, 0.3); /* Purple accent border */
-            box-shadow: 0 0 15px rgba(139, 92, 246, 0.2); /* Subtle purple shadow */
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            overflow: hidden;
-            opacity: 0;
-            transform: translateY(50px);
+        .animated-card {
+            background-color: #1A1A1A; /* Slightly lighter dark */
+            border: 1px solid rgba(255, 255, 255, 0.08); /* Subtle border */
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, background-color 0.3s ease-out;
+            opacity: 0; /* Initial state for JS animation */
+            transform: translateY(30px); /* Initial state for JS animation */
         }
 
-        .interactive-card.is-visible {
-            animation: slideUpFadeIn 0.7s ease-out forwards;
+        .animated-card.is-visible {
+            animation: slide-up-fade-in 0.7s ease-out forwards;
         }
 
-        .interactive-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
-            border-color: rgba(139, 92, 246, 0.6);
+        .animated-card:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 198, 255, 0.2); /* Glow on hover */
+            background-color: #222222; /* Slightly lighter on hover */
         }
 
-        /* Specific styles for action buttons */
-        .interactive-card.contact-ceo-card {
-            background: linear-gradient(to right, #8B5CF6, #EC4899); /* Purple to Pink */
-            border: none;
-            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
-            color: white;
-            font-family: 'Oswald', sans-serif;
-        }
-        .interactive-card.contact-ceo-card:hover {
-            background: linear-gradient(to right, #9F7AEA, #F472B6);
-        }
-
-        .interactive-card.join-community-card {
-            background: linear-gradient(to right, #10B981, #34D399); /* Green */
-            border: none;
-            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
-            color: white;
-            font-family: 'Oswald', sans-serif;
-        }
-        .interactive-card.join-community-card:hover {
-            background: linear-gradient(to right, #34D399, #6EE7B7);
-        }
-
-        /* Specific styles for feature cards */
-        .legacy-card {
-            background: rgba(20, 25, 35, 0.9);
-            border-color: rgba(251, 191, 36, 0.3); /* Amber border */
-        }
-        .legacy-card:hover {
-            border-color: rgba(251, 191, 36, 0.6);
-        }
-        .legacy-card svg { color: #FBBF24; /* Amber */ }
-        .legacy-card span { color: #FBBF24; /* Amber */ font-family: 'Oswald', sans-serif; }
-
-        .focused-card {
-            background: rgba(20, 25, 35, 0.9);
-            border-color: rgba(96, 165, 250, 0.3); /* Blue border */
-        }
-        .focused-card:hover {
-            border-color: rgba(96, 165, 250, 0.6);
-        }
-        .focused-card svg { color: #60A5FA; /* Blue */ }
-        .focused-card span { color: #60A5FA; /* Blue */ font-family: 'Oswald', sans-serif; }
-
-        .uncharted-card {
-            background: rgba(20, 25, 35, 0.9);
-            border-color: rgba(236, 72, 153, 0.3); /* Pink border */
-        }
-        .uncharted-card:hover {
-            border-color: rgba(236, 72, 153, 0.6);
-        }
-        .uncharted-card svg { color: #EC4899; /* Pink */ }
-        .uncharted-card span { color: #EC4899; /* Pink */ font-family: 'Oswald', sans-serif; }
-
-        /* Styles for message cards */
-        .message-card {
-            background: rgba(20, 25, 35, 0.9);
-            border-color: rgba(45, 212, 191, 0.3); /* Teal border */
-        }
-        .message-card:hover {
-            border-color: rgba(45, 212, 191, 0.6);
-        }
+        /* Specific card styles */
         .message-card h3 {
-            font-family: 'Oswald', sans-serif;
-            color: #2DD4BF; /* Teal */
+            color: #00C6FF; /* Blue accent for titles */
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+        }
+        .message-card p {
+            color: #B0B0B0;
         }
 
-        /* Footer specific styling */
+        .action-button-card {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.25rem 2rem; /* py-5 px-8 */
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease-out;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .action-button-card.contact-ceo {
+            background: linear-gradient(45deg, #FF6B6B, #FFD166); /* Red to Yellow */
+            color: #1A1A1A; /* Dark text on bright button */
+        }
+        .action-button-card.contact-ceo:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .action-button-card.join-community {
+            background: linear-gradient(45deg, #00C6FF, #928DFF); /* Blue to Purple */
+            color: #1A1A1A; /* Dark text on bright button */
+        }
+        .action-button-card.join-community:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(0, 198, 255, 0.4);
+        }
+
+        .feature-card svg {
+            color: #FFD166; /* Gold accent for icons */
+        }
+        .feature-card span {
+            color: #FFD166; /* Gold accent for titles */
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        .feature-card p {
+            color: #B0B0B0;
+        }
+
+        /* Footer styling */
         footer {
-            background: #111; /* Darker footer */
-            border-top: 1px solid rgba(139, 92, 246, 0.2); /* Subtle purple border top */
+            background-color: #111111; /* Slightly lighter than body */
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 2rem 1.5rem;
+            text-align: center;
+            color: #888888;
+            font-size: 0.9rem;
         }
     </style>
 </head>
-<body class="min-h-screen bg-gray-900 text-gray-100 font-inter">
+<body>
     <!-- Hero Section -->
-    <section id="hero" class="relative min-h-screen flex items-center justify-center text-center p-6 md:p-12 overflow-hidden bg-gray-950">
-        <!-- Background gradient -->
-        <div class="absolute inset-0 bg-gradient-to-br from-blue-950 via-purple-950 to-gray-900 opacity-70"></div>
-        <!-- Abstract 3D blob elements -->
-        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 md:w-96 md:h-96 bg-gradient-to-br from-pink-500 to-orange-600 rounded-full mix-blend-screen filter blur-3xl opacity-60 animate-blob"></div>
-        <div class="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-60 h-60 md:w-80 md:h-80 bg-gradient-to-br from-teal-500 to-lime-600 rounded-full mix-blend-screen filter blur-3xl opacity-60 animate-blob animation-delay-2000"></div>
-
-        <div class="relative z-10 max-w-4xl mx-auto">
-            <!-- Profile Picture (Circular) -->
-            <div class="profile-circular-container">
+    <section id="hero" class="hero-section">
+        <div class="hero-content">
+            <!-- Profile Picture with Glowing Border -->
+            <div class="profile-glow-container">
                 <img
-                    src="https://i.ibb.co/TBxpf6B/image.png"
+                    src="https://i.ibb.co/TBxpf6B/Sigma-Logo.jpg"
                     alt="SigmaDox Profile"
-                    onerror="this.onerror=null; this.src='https://placehold.co/400x400/222/fff?text=Image+Error'; this.alt='Profile Image Error';"
+                    onerror="this.onerror=null; this.src='https://placehold.co/400x400/1A1A1A/E0E0E0?text=Error'; this.alt='Profile Image Error';"
                 />
             </div>
 
-            <h1 class="hero-glitch-text text-5xl md:text-7xl lg:text-8xl font-extrabold leading-tight mb-6" data-text="𝑺𝒊𝒈𝒎𝒂𝑫𝒐𝒙 </>">
+            <!-- Main Title -->
+            <h1 class="hero-title font-montserrat">
                 𝑺𝒊𝒈𝒎𝒂𝑫𝒐𝒙 </>
             </h1>
-            <p class="text-xl md:text-2xl text-gray-300 mb-10 opacity-0 animate-slide-up-fade-in" style="animation-delay: 1.8s;">
+            <!-- Subtitle -->
+            <p class="hero-subtitle font-inter">
                 Building Communities, Embracing Growth, Charting New Paths.
             </p>
         </div>
     </section>
 
     <!-- Message Section -->
-    <section id="message" class="bg-gray-800">
-        <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 text-teal-400 font-oswald">A MESSAGE FROM 𝑺𝒊𝒈𝒎𝒂𝑫𝒐𝒙</h2>
+    <section id="message" class="bg-gradient-to-br from-[#1A1A1A] to-[#0A0A0A] rounded-xl shadow-2xl">
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 text-[#00C6FF] font-montserrat tracking-tight">A MESSAGE FROM 𝑺𝒊𝒈𝒎𝒂𝑫𝒐𝒙</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="interactive-card message-card p-8 rounded-xl shadow-xl" style="animation-delay: 0.1s;">
-                <h3 class="text-2xl font-semibold mb-4 text-white font-oswald">A NEW CHAPTER BEGINS</h3>
-                <p class="text-gray-300 leading-relaxed">Dear Community, I’m writing today with a deep sense of gratitude and a clear sense of purpose. As I transition into the next chapter of my academic journey—motivated by my recent Class 12 results—I've made the important decision to temporarily step back from social media, including Telegram and Instagram, to fully focus on higher education and personal growth.</p>
+            <div class="animated-card message-card p-8">
+                <h3 class="text-2xl font-semibold mb-4">A NEW CHAPTER BEGINS</h3>
+                <p class="leading-relaxed">Dear Community, I’m writing today with a deep sense of gratitude and a clear sense of purpose. As I transition into the next chapter of my academic journey—motivated by my recent Class 12 results—I've made the important decision to temporarily step back from social media, including Telegram and Instagram, to fully focus on higher education and personal growth.</p>
             </div>
-            <div class="interactive-card message-card p-8 rounded-xl shadow-xl" style="animation-delay: 0.2s;">
-                <h3 class="text-2xl font-semibold mb-4 text-white font-oswald">MY DIGITAL JOURNEY</h3>
-                <p class="text-gray-300 leading-relaxed">Since 2019, my digital journey has been filled with meaningful experiences. From building multiple Telegram communities—including one that reached over 10,000 subscribers—to currently managing an active 3,000-member group, this path has been both fulfilling and inspiring. These platforms have allowed for knowledge sharing, connection, and collaboration. However, their constant presence has also become a distraction from the level of focus my academic goals now demand.</p>
+            <div class="animated-card message-card p-8">
+                <h3 class="text-2xl font-semibold mb-4">MY DIGITAL JOURNEY</h3>
+                <p class="leading-relaxed">Since 2019, my digital journey has been filled with meaningful experiences. From building multiple Telegram communities—including one that reached over 10,000 subscribers—to currently managing an active 3,000-member group, this path has been both fulfilling and inspiring. These platforms have allowed for knowledge sharing, connection, and collaboration. However, their constant presence has also become a distraction from the level of focus my academic goals now demand.</p>
             </div>
-            <div class="interactive-card message-card p-8 rounded-xl shadow-xl" style="animation-delay: 0.3s;">
-                <h3 class="text-2xl font-semibold mb-4 text-white font-oswald">A CONSCIOUS PAUSE</h3>
-                <p class="text-gray-300 leading-relaxed">This is not a goodbye—rather, it is a conscious pause. A step back to step forward. While I may return in the future under a new light, for now, my energy must be directed toward growth, learning, and achieving new heights.</p>
+            <div class="animated-card message-card p-8">
+                <h3 class="text-2xl font-semibold mb-4">A CONSCIOUS PAUSE</h3>
+                <p class="leading-relaxed">This is not a goodbye—rather, it is a conscious pause. A step back to step forward. While I may return in the future under a new light, for now, my energy must be directed toward growth, learning, and achieving new heights.</p>
             </div>
-            <div class="interactive-card message-card p-8 rounded-xl shadow-xl" style="animation-delay: 0.4s;">
-                <h3 class="text-2xl font-semibold mb-4 text-white font-oswald">GRATITUDE & FAREWELL</h3>
-                <p class="text-gray-300 leading-relaxed">To everyone who has been a part of this journey: thank you. Your support, ideas, and presence have meant a great deal to me. I wish you all continued success and fulfillment in your own endeavors. Warm regards, ⌁ 𝑺𝒊𝒈𝒎𝒂𝑫𝒐𝒙</p>
+            <div class="animated-card message-card p-8">
+                <h3 class="text-2xl font-semibold mb-4">GRATITUDE & FAREWELL</h3>
+                <p class="leading-relaxed">To everyone who has been a part of this journey: thank you. Your support, ideas, and presence have meant a great deal to me. I wish you all continued success and fulfillment in your own endeavors. Warm regards, ⌁ 𝑺𝒊𝒈𝒎𝒂𝑫𝒐𝒙</p>
             </div>
         </div>
     </section>
 
     <!-- Action Buttons Section -->
-    <section class="bg-gray-950">
-        <div class="mt-14 flex flex-col md:flex-row justify-center gap-8">
-            <a href="https://t.me/SigmaDox7" target="_blank" rel="noopener noreferrer" class="interactive-card contact-ceo-card flex-1 min-w-[220px] text-center py-5 px-8 rounded-xl cursor-pointer font-bold text-xl transition-colors duration-300 transform hover:scale-105" style="animation-delay: 0.5s;">
+    <section class="bg-gradient-to-br from-[#0A0A0A] to-[#1A1A1A] rounded-xl shadow-2xl">
+        <div class="flex flex-col md:flex-row justify-center gap-8">
+            <a href="https://t.me/SigmaDox7" target="_blank" rel="noopener noreferrer" class="animated-card action-button-card contact-ceo rounded-full">
                 CONTACT CEO
             </a>
-            <a href="https://t.me/+7OoCk9Y1x_s5YjJl" target="_blank" rel="noopener noreferrer" class="interactive-card join-community-card flex-1 min-w-[220px] text-center py-5 px-8 rounded-xl cursor-pointer font-bold text-xl transition-colors duration-300 transform hover:scale-105" style="animation-delay: 0.6s;">
+            <a href="https://t.me/+7OoCk9Y1x_s5YjJl" target="_blank" rel="noopener noreferrer" class="animated-card action-button-card join-community rounded-full">
                 JOIN COMMUNITY
             </a>
         </div>
     </section>
 
     <!-- Feature Cards Section -->
-    <section id="legacy-section" class="bg-gray-800">
-        <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 text-teal-400 font-oswald">MY JOURNEY & FUTURE</h2>
+    <section id="legacy-section" class="bg-gradient-to-br from-[#1A1A1A] to-[#0A0A0A] rounded-xl shadow-2xl">
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 text-[#FFD166] font-montserrat tracking-tight">MY JOURNEY & FUTURE</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <!-- Legacy Built Card -->
-            <div class="interactive-card legacy-card flex flex-col items-center p-7 rounded-xl text-center" style="animation-delay: 0.7s;">
+            <div class="animated-card feature-card flex flex-col items-center p-7 text-center">
                 <svg class="w-14 h-14 mb-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15.546c-.523 0-1.046.11-1.535.331A9.752 9.752 0 0012 21a9.753 9.753 0 00-7.465-3.123 1.99 1.99 0 01-1.535-.331C2 15.546 2 14.656 2 12c0-2.757 1.293-5.232 3.376-6.843A12.001 12.001 0 0012 2c2.757 0 5.232 1.293 6.843 3.376A12.001 12.001 0 0022 12c0 2.656 0 3.546-1 3.546zM12 11V3"></path>
                 </svg>
@@ -318,7 +305,7 @@
             </div>
 
             <!-- Focused Future Card -->
-            <div class="interactive-card focused-card flex flex-col items-center p-7 rounded-xl text-center" style="animation-delay: 0.8s;">
+            <div class="animated-card feature-card flex flex-col items-center p-7 text-center">
                 <svg class="w-14 h-14 mb-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
                 </svg>
@@ -327,7 +314,7 @@
             </div>
 
             <!-- Uncharted Paths Card -->
-            <div class="interactive-card uncharted-card flex flex-col items-center p-7 rounded-xl text-center" style="animation-delay: 0.9s;">
+            <div class="animated-card feature-card flex flex-col items-center p-7 text-center">
                 <svg class="w-14 h-14 mb-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M10 20.547a9.001 9.001 0 01-5-8.411V7a2 2 0 012-2h10a2 2 0 012 2v5.136a9.001 9.001 0 01-5 8.411m0 0V21"></path>
                 </svg>
@@ -338,7 +325,7 @@
     </section>
 
     <!-- Footer -->
-    <footer class="py-8 px-6 md:px-12 text-center text-gray-400 rounded-t-xl bg-gray-950">
+    <footer class="footer">
         <p class="mb-2">&copy; 2025 𝑺𝒊𝒈𝒎𝒂𝑫𝒐𝒙 </>. All rights reserved.</p>
         <p class="text-sm">Crafted with precision for a digital future.</p>
     </footer>
@@ -360,8 +347,8 @@
                 threshold: 0.1 // Trigger when 10% of the element is visible
             });
 
-            // Observe all elements with the 'interactive-card' class
-            document.querySelectorAll('.interactive-card').forEach(card => {
+            // Observe all elements with the 'animated-card' class
+            document.querySelectorAll('.animated-card').forEach(card => {
                 observer.observe(card);
             });
         });
