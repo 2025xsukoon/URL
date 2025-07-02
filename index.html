@@ -100,41 +100,31 @@
             100% { transform: translate(0); }
         }
 
-        /* Profile picture with fragmented effect (FRAMEUP inspired) */
-        .profile-frameup-container {
+        /* Circular profile picture */
+        .profile-circular-container {
             position: relative;
-            width: 200px; /* Larger base size */
-            height: 200px;
+            width: 160px; /* Adjusted size */
+            height: 160px;
+            border-radius: 50%;
             overflow: hidden;
-            background-color: #222; /* Dark background for fragments */
-            box-shadow: 0 0 40px rgba(255, 0, 0, 0.4); /* Red accent shadow */
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.6); /* Purple shadow */
             margin: 0 auto 2rem;
             animation: profile-fade-in 1.5s ease-out forwards;
             animation-delay: 0.5s;
             opacity: 0;
-            transform: rotate(-5deg); /* Slight rotation like FRAMEUP */
-            border: 2px solid #FF0000; /* Red border */
+            border: 4px solid #8B5CF6; /* Purple border */
         }
 
-        .profile-frameup-fragment {
-            position: absolute;
-            background-size: cover;
-            background-position: center;
-            transition: all 0.2s ease-out;
-            border: 1px solid rgba(255, 0, 0, 0.2); /* Subtle red border on fragments */
-        }
-
-        /* Hover effect for fragments */
-        .profile-frameup-fragment:hover {
-            transform: translate(var(--dx), var(--dy)) scale(1.1);
-            filter: brightness(1.2);
-            z-index: 10;
+        .profile-circular-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         /* Keyframes for initial profile fade-in */
         @keyframes profile-fade-in {
-            from { opacity: 0; transform: scale(0.8) rotate(-5deg); }
-            to { opacity: 1; transform: scale(1) rotate(-5deg); }
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         /* Background blob animations */
@@ -158,9 +148,9 @@
 
         .interactive-card {
             position: relative;
-            background: #111; /* Even darker background */
-            border: 1px solid rgba(255, 0, 0, 0.3); /* Red accent border */
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.1); /* Subtle red shadow */
+            background: rgba(15, 20, 30, 0.85); /* Darker, more opaque */
+            border: 1px solid rgba(139, 92, 246, 0.3); /* Purple accent border */
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.2); /* Subtle purple shadow */
             transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             overflow: hidden;
             opacity: 0;
@@ -173,83 +163,101 @@
 
         .interactive-card:hover {
             transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 10px 30px rgba(255, 0, 0, 0.4);
-            border-color: rgba(255, 0, 0, 0.6);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+            border-color: rgba(139, 92, 246, 0.6);
         }
 
         /* Specific styles for action buttons */
         .interactive-card.contact-ceo-card {
-            background: #FF0000; /* Solid red */
+            background: linear-gradient(to right, #8B5CF6, #EC4899); /* Purple to Pink */
             border: none;
-            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4);
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
             color: white;
             font-family: 'Oswald', sans-serif;
         }
         .interactive-card.contact-ceo-card:hover {
-            background: #CC0000; /* Darker red on hover */
+            background: linear-gradient(to right, #9F7AEA, #F472B6);
         }
 
         .interactive-card.join-community-card {
-            background: #333; /* Dark grey */
-            border: 1px solid #FF0000; /* Red border */
-            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.2);
-            color: #FF0000; /* Red text */
+            background: linear-gradient(to right, #10B981, #34D399); /* Green */
+            border: none;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+            color: white;
             font-family: 'Oswald', sans-serif;
         }
         .interactive-card.join-community-card:hover {
-            background: #444;
-            color: white;
+            background: linear-gradient(to right, #34D399, #6EE7B7);
         }
 
         /* Specific styles for feature cards */
-        .legacy-card, .focused-card, .uncharted-card {
-            background: #111;
-            border-color: rgba(255, 0, 0, 0.3);
+        .legacy-card {
+            background: rgba(20, 25, 35, 0.9);
+            border-color: rgba(251, 191, 36, 0.3); /* Amber border */
         }
-        .legacy-card:hover, .focused-card:hover, .uncharted-card:hover {
-            border-color: rgba(255, 0, 0, 0.6);
+        .legacy-card:hover {
+            border-color: rgba(251, 191, 36, 0.6);
         }
-        .legacy-card svg, .focused-card svg, .uncharted-card svg {
-            color: #FF0000; /* All icons red */
+        .legacy-card svg { color: #FBBF24; /* Amber */ }
+        .legacy-card span { color: #FBBF24; /* Amber */ font-family: 'Oswald', sans-serif; }
+
+        .focused-card {
+            background: rgba(20, 25, 35, 0.9);
+            border-color: rgba(96, 165, 250, 0.3); /* Blue border */
         }
-        .legacy-card span, .focused-card span, .uncharted-card span {
-            font-family: 'Oswald', sans-serif; /* Bold font for titles */
-            color: #FF0000; /* Red text for titles */
+        .focused-card:hover {
+            border-color: rgba(96, 165, 250, 0.6);
         }
+        .focused-card svg { color: #60A5FA; /* Blue */ }
+        .focused-card span { color: #60A5FA; /* Blue */ font-family: 'Oswald', sans-serif; }
+
+        .uncharted-card {
+            background: rgba(20, 25, 35, 0.9);
+            border-color: rgba(236, 72, 153, 0.3); /* Pink border */
+        }
+        .uncharted-card:hover {
+            border-color: rgba(236, 72, 153, 0.6);
+        }
+        .uncharted-card svg { color: #EC4899; /* Pink */ }
+        .uncharted-card span { color: #EC4899; /* Pink */ font-family: 'Oswald', sans-serif; }
 
         /* Styles for message cards */
         .message-card {
-            background: #111;
-            border-color: rgba(255, 0, 0, 0.3);
+            background: rgba(20, 25, 35, 0.9);
+            border-color: rgba(45, 212, 191, 0.3); /* Teal border */
         }
         .message-card:hover {
-            border-color: rgba(255, 0, 0, 0.6);
+            border-color: rgba(45, 212, 191, 0.6);
         }
         .message-card h3 {
             font-family: 'Oswald', sans-serif;
-            color: #FF0000; /* Red text for message card titles */
+            color: #2DD4BF; /* Teal */
         }
 
         /* Footer specific styling */
         footer {
             background: #111; /* Darker footer */
-            border-top: 1px solid rgba(255, 0, 0, 0.2); /* Subtle red border top */
+            border-top: 1px solid rgba(139, 92, 246, 0.2); /* Subtle purple border top */
         }
     </style>
 </head>
 <body class="min-h-screen bg-gray-900 text-gray-100 font-inter">
-    <!-- Hero Section - Ultra Modernized (FRAMEUP Inspired) -->
+    <!-- Hero Section -->
     <section id="hero" class="relative min-h-screen flex items-center justify-center text-center p-6 md:p-12 overflow-hidden bg-gray-950">
-        <!-- Background gradient inspired by Simon Sparks (toned down for FRAMEUP) -->
-        <div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-950 opacity-70"></div>
-        <!-- Abstract 3D element placeholder (toned down) -->
-        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 md:w-96 md:h-96 bg-red-600 rounded-full mix-blend-screen filter blur-3xl opacity-30 animate-blob"></div>
-        <div class="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-60 h-60 md:w-80 md:h-80 bg-red-600 rounded-full mix-blend-screen filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+        <!-- Background gradient -->
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-950 via-purple-950 to-gray-900 opacity-70"></div>
+        <!-- Abstract 3D blob elements -->
+        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 md:w-96 md:h-96 bg-gradient-to-br from-pink-500 to-orange-600 rounded-full mix-blend-screen filter blur-3xl opacity-60 animate-blob"></div>
+        <div class="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-60 h-60 md:w-80 md:h-80 bg-gradient-to-br from-teal-500 to-lime-600 rounded-full mix-blend-screen filter blur-3xl opacity-60 animate-blob animation-delay-2000"></div>
 
         <div class="relative z-10 max-w-4xl mx-auto">
-            <!-- Profile Picture with Fragmented Effect -->
-            <div id="profile-pic-container" class="profile-frameup-container">
-                <!-- JavaScript will dynamically create fragments here -->
+            <!-- Profile Picture (Circular) -->
+            <div class="profile-circular-container">
+                <img
+                    src="https://i.ibb.co/TBxpf6B/image.png"
+                    alt="SigmaDox Profile"
+                    onerror="this.onerror=null; this.src='https://placehold.co/400x400/222/fff?text=Image+Error'; this.alt='Profile Image Error';"
+                />
             </div>
 
             <h1 class="hero-glitch-text text-5xl md:text-7xl lg:text-8xl font-extrabold leading-tight mb-6" data-text="𝑺𝒊𝒈𝒎𝒂𝑫𝒐𝒙 </>">
@@ -263,7 +271,7 @@
 
     <!-- Message Section -->
     <section id="message" class="bg-gray-800">
-        <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 text-red-600 font-oswald">A MESSAGE FROM 𝑺𝒊𝒈𝒎𝒂𝑫𝒐𝒙</h2>
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 text-teal-400 font-oswald">A MESSAGE FROM 𝑺𝒊𝒈𝒎𝒂𝑫𝒐𝒙</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div class="interactive-card message-card p-8 rounded-xl shadow-xl" style="animation-delay: 0.1s;">
                 <h3 class="text-2xl font-semibold mb-4 text-white font-oswald">A NEW CHAPTER BEGINS</h3>
@@ -298,7 +306,7 @@
 
     <!-- Feature Cards Section -->
     <section id="legacy-section" class="bg-gray-800">
-        <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 text-red-600 font-oswald">MY JOURNEY & FUTURE</h2>
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 text-teal-400 font-oswald">MY JOURNEY & FUTURE</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <!-- Legacy Built Card -->
             <div class="interactive-card legacy-card flex flex-col items-center p-7 rounded-xl text-center" style="animation-delay: 0.7s;">
@@ -338,51 +346,6 @@
     <script>
         // Initialize Lucide icons
         lucide.createIcons();
-
-        // Profile Picture Fragmented Effect (FRAMEUP Inspired)
-        document.addEventListener('DOMContentLoaded', () => {
-            const profilePicContainer = document.getElementById('profile-pic-container');
-            // IMPORTANT: Use a direct image URL. If 'https://ibb.co/TBxpf6B' is not direct,
-            // right-click the image on ibb.co and select "Copy image address".
-            const imageUrl = 'https://i.ibb.co/TBxpf6B/image.png'; // Updated to likely direct link
-            const gridSize = 4; // 4x4 grid for fragments (fewer, larger fragments)
-
-            if (profilePicContainer) {
-                const img = new Image();
-                img.src = imageUrl;
-                img.onload = () => {
-                    const containerSize = profilePicContainer.offsetWidth;
-                    const fragmentSize = containerSize / gridSize;
-
-                    for (let i = 0; i < gridSize; i++) {
-                        for (let j = 0; j < gridSize; j++) {
-                            const fragment = document.createElement('div');
-                            fragment.classList.add('profile-frameup-fragment');
-                            fragment.style.width = `${fragmentSize}px`;
-                            fragment.style.height = `${fragmentSize}px`;
-                            fragment.style.left = `${j * fragmentSize}px`;
-                            fragment.style.top = `${i * fragmentSize}px`;
-                            fragment.style.backgroundImage = `url(${imageUrl})`;
-                            fragment.style.backgroundPosition = `-${j * fragmentSize}px -${i * fragmentSize}px`;
-
-                            // Random offsets for hover effect
-                            const randomX = (Math.random() - 0.5) * 15; // -7.5 to 7.5px
-                            const randomY = (Math.random() - 0.5) * 15; // -7.5 to 7.5px
-                            fragment.style.setProperty('--dx', `${randomX}px`);
-                            fragment.style.setProperty('--dy', `${randomY}px`);
-
-                            profilePicContainer.appendChild(fragment);
-                        }
-                    }
-                };
-                img.onerror = () => {
-                    // Fallback if image fails to load
-                    profilePicContainer.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gray-700 text-red-500 text-xs font-bold">IMAGE ERROR: CHECK URL</div>`;
-                    profilePicContainer.style.boxShadow = '0 0 20px rgba(255, 0, 0, 0.8)';
-                    profilePicContainer.style.border = '2px dashed red';
-                };
-            }
-        });
 
         // Intersection Observer for scroll-triggered animations
         document.addEventListener('DOMContentLoaded', () => {
