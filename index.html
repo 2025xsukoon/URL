@@ -1,806 +1,309 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>SigmaDox – Personal Website</title>
-    <meta
-      name="description"
-      content="My name is SigmaDox, I’m an award-winning web dev / digital designer and full stack software engineer. I have a passion for all things technology and design, from software engineering & machine learning to UI/UX & 3D graphics."
-    />
-    <link rel="icon" type="image/png" href="https://placehold.co/32x32/f6d4b1/000000?text=SD" />
-
-    <meta
-      name="viewport"
-      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0,viewport-fit=cover"
-    />
-    <link rel="apple-touch-icon" sizes="180x180" href="https://placehold.co/180x180/f6d4b1/000000?text=SD" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta
-      name="apple-mobile-web-app-title"
-      content="SigmaDox – Personal Website"
-    />
-    <meta
-      name="apple-mobile-web-app-status-bar-style"
-      content="black-translucent"
-    />
-    <meta name="theme-color" content="#f6d4b1" />
-
-    <meta property="og:title" content="SigmaDox – Personal Website" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://sigmadox.dev/" />
-    <meta property="og:image" content="https://placehold.co/1200x630/f6d4b1/000000?text=SigmaDox" />
-    <meta
-      name="og:description"
-      content="My name is SigmaDox, I’m an award-winning web dev / digital designer and full stack software engineer. I have a passion for all things technology and design, from software engineering & machine learning to UI/UX & 3D graphics."
-    />
-    <link rel="manifest" href="/manifest.json" />
-
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Portfolio & Life Journey</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
-      /* Custom CSS for base styles and specific overrides not easily done with Tailwind */
-      :root {
-        --primary-color: #f6d4b1;
-        --secondary-color: #333;
-        --text-color: #333;
-        --link-color: #007bff;
-        --link-hover-color: #0056b3;
-      }
-
-      body {
-        font-family: 'Inter', sans-serif;
-        color: var(--text-color);
-        background-color: #f0f0f0; /* Light background */
-        line-height: 1.6;
-        scroll-behavior: smooth;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        overflow-x: hidden; /* Prevent horizontal scroll */
-      }
-
-      /* Ensure canvas takes full width and height of its container */
-      .webgl {
-        position: absolute;
-        top: 0;
-        left: 0;
-        outline: none;
-        z-index: 0; /* Behind other content */
-      }
-
-      /* Styling for the loading screen */
-      #loading {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-color: #1a1a1a;
-        color: var(--primary-color);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-        transition: opacity 1s ease-out;
-      }
-
-      #loading.hidden {
-        opacity: 0;
-        pointer-events: none;
-      }
-
-      #loading-bar {
-        width: 80%;
-        max-width: 400px;
-        height: 8px;
-        background-color: #555;
-        border-radius: 4px;
-        overflow: hidden;
-        margin-top: 1rem;
-      }
-
-      #loading-bar-progress {
-        width: 0%;
-        height: 100%;
-        background-color: var(--primary-color);
-        transition: width 0.5s ease-in-out;
-      }
-
-      #loading-items {
-        margin-top: 0.5rem;
-        font-size: 0.9rem;
-      }
-
-      /* Navigation specific styles */
-      nav {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem;
-        background-color: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(5px);
-        z-index: 50;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      }
-
-      .menu-btn {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-
-      .menu-btn .btn {
-        background-color: var(--primary-color);
-        color: var(--text-color);
-        padding: 0.5rem 0.75rem;
-        border-radius: 0.5rem;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .menu-btn .btn:hover {
-        background-color: #e0c29f;
-        transform: translateY(-2px);
-      }
-
-      .menu-btn svg {
-        fill: currentColor;
-      }
-
-      .menu-body {
-        display: none; /* Hidden by default */
-        flex-direction: column;
-        position: absolute;
-        top: 100%; /* Below the nav bar */
-        left: 0;
-        width: 100%;
-        background-color: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(5px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        padding: 1rem 0;
-      }
-
-      nav.active .menu-body {
-        display: flex; /* Show when active */
-      }
-
-      .menu-body a {
-        padding: 0.75rem 1.5rem;
-        color: var(--text-color);
-        text-decoration: none;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-      }
-
-      .menu-body a:hover {
-        background-color: var(--primary-color);
-        transform: translateY(-2px);
-      }
-
-      #tip-scroll {
-        display: none; /* Hidden by default, can be shown with JS */
-        position: fixed;
-        bottom: 1rem;
-        right: 1rem;
-        background-color: rgba(0, 0, 0, 0.7);
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: 0.5rem;
-        font-size: 0.8rem;
-        z-index: 40;
-      }
-
-      /* Hero backup for non-WebGL or initial load */
-      #hero-backup {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        text-align: center;
-        color: var(--primary-color);
-        z-index: 1;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-      }
-      #hero-backup h1 {
-        font-size: 3rem;
-        font-weight: 700;
-      }
-      #hero-backup h3 {
-        font-size: 1.5rem;
-        font-weight: 400;
-      }
-      #hero-backup ul {
-        list-style: none;
-        padding: 0;
-        margin-top: 0.5rem;
-        font-size: 1.1rem;
-      }
-
-      /* Main content sections */
-      main {
-        position: relative;
-        z-index: 10; /* Above WebGL canvas */
-        padding-top: 5rem; /* Space for fixed nav */
-      }
-
-      section {
-        max-width: 800px;
-        margin: 2rem auto;
-        padding: 2rem;
-        background-color: white;
-        border-radius: 1rem;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        opacity: 0; /* Hidden by default for animation */
-        transform: translateY(20px); /* Start slightly below */
-        transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-      }
-
-      section.animated {
-        opacity: 1;
-        transform: translateY(0);
-      }
-
-      section h1 {
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 1.5rem;
-        text-align: center;
-        color: var(--secondary-color);
-      }
-
-      section h2 {
-        font-size: 2rem;
-        font-weight: 600;
-        margin-top: 2rem;
-        margin-bottom: 0.5rem;
-        color: var(--secondary-color);
-      }
-
-      section h3 {
-        font-size: 1.25rem;
-        font-weight: 400;
-        margin-bottom: 1rem;
-        color: #666;
-      }
-
-      section p {
-        margin-bottom: 1rem;
-      }
-
-      section a {
-        color: var(--link-color);
-        text-decoration: none;
-        transition: color 0.3s ease;
-      }
-
-      section a:hover {
-        color: var(--link-hover-color);
-        text-decoration: underline;
-      }
-
-      .skills {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        list-style: none;
-        padding: 0;
-        margin-bottom: 1.5rem;
-      }
-
-      .skills li {
-        background-color: var(--primary-color);
-        padding: 0.3rem 0.8rem;
-        border-radius: 0.5rem;
-        font-size: 0.9rem;
-        font-weight: 600;
-        color: var(--text-color);
-        transition: transform 0.2s ease;
-      }
-
-      .skills li:hover {
-        transform: translateY(-2px);
-      }
-
-      hr {
-        border: none;
-        border-top: 1px solid #eee;
-        margin: 2rem 0;
-      }
-
-      .image {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        margin-top: 1.5rem;
-        margin-bottom: 1.5rem;
-        border-radius: 0.75rem;
-        overflow: hidden; /* Ensure rounded corners apply to children */
-      }
-
-      .image img,
-      .image video,
-      .image iframe {
-        width: 100%;
-        height: auto;
-        border-radius: 0.75rem; /* Apply rounded corners to media */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-      }
-
-      .image img:hover,
-      .image video:hover,
-      .image iframe:hover {
-        transform: scale(1.01);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-      }
-
-      .collapse-btn {
-        background-color: var(--primary-color);
-        color: var(--text-color);
-        padding: 0.75rem 1.5rem;
-        border-radius: 0.5rem;
-        border: none;
-        cursor: pointer;
-        font-weight: 600;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-        display: block; /* Make it a block element */
-        margin: 1rem auto; /* Center the button */
-      }
-
-      .collapse-btn:hover {
-        background-color: #e0c29f;
-        transform: translateY(-2px);
-      }
-
-      .collapse-body {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.5s ease-out;
-      }
-
-      .collapse-btn[collapsed="false"] + .collapse-body {
-        max-height: 500px; /* Adjust as needed for content */
-      }
-
-      footer {
-        text-align: center;
-        padding: 2rem;
-        margin-top: 3rem;
-        background-color: var(--secondary-color);
-        color: white;
-        font-size: 0.85rem;
-        border-top-left-radius: 1rem;
-        border-top-right-radius: 1rem;
-      }
-
-      footer div {
-        margin-bottom: 0.5rem;
-      }
-
-      /* Responsive adjustments */
-      @media (min-width: 768px) {
-        nav {
-          padding: 1rem 2rem;
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a202c; /* Dark background inspired by Simon Sparks/Frame Up */
+            color: #e2e8f0; /* Light text color */
+            line-height: 1.6;
         }
-        .menu-btn {
-          gap: 1rem;
+        .container {
+            max-width: 1200px;
         }
-        .menu-body {
-          position: static;
-          flex-direction: row;
-          display: flex !important; /* Always show on desktop */
-          background-color: transparent;
-          box-shadow: none;
-          padding: 0;
+        .section-title {
+            font-size: 3rem; /* Large, bold titles inspired by Frame Up/Snap Master */
+            font-weight: 800;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: #cbd5e0; /* Slightly lighter than body text for contrast */
         }
-        .menu-body a {
-          padding: 0.5rem 1rem;
+        .btn-primary {
+            background-color: #f6ad55; /* Vibrant accent color */
+            color: #1a202c;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
         }
-        .menu-btn > button {
-          display: none; /* Hide hamburger on desktop */
+        .btn-primary:hover {
+            background-color: #ed8936;
         }
-        #hero-backup h1 {
-          font-size: 5rem;
+        .card {
+            background-color: #2d3748; /* Slightly lighter dark for cards */
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
         }
-        #hero-backup h3 {
-          font-size: 2rem;
+        .card:hover {
+            transform: translateY(-5px);
         }
-        #hero-backup ul {
-          font-size: 1.5rem;
+        .timeline-item {
+            position: relative;
+            padding-left: 2.5rem;
+            margin-bottom: 2rem;
         }
-        section {
-          padding: 3rem;
-          margin: 4rem auto;
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.5rem;
+            width: 12px;
+            height: 12px;
+            background-color: #f6ad55; /* Accent color for timeline dots */
+            border-radius: 50%;
+            z-index: 1;
         }
-        section h1 {
-          font-size: 3.5rem;
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: #4a5568; /* Line color */
         }
-        section h2 {
-          font-size: 2.5rem;
+        .timeline-item:last-child::after {
+            height: 0; /* No line after the last item */
         }
-        section h3 {
-          font-size: 1.5rem;
+        .nav-link {
+            transition: color 0.3s ease;
         }
-      }
+        .nav-link:hover {
+            color: #f6ad55; /* Accent color on hover */
+        }
     </style>
-  </head>
+</head>
+<body class="antialiased">
 
-  <body>
-    <!-- Loading Screen -->
-    <div id="loading">
-      <h2 class="text-2xl md:text-3xl font-bold">Booting...</h2>
-      <div id="loading-bar">
-        <div id="loading-bar-progress"></div>
-      </div>
-      <div id="loading-items" class="text-sm md:text-base">Starting...</div>
-    </div>
+    <!-- Header and Navigation -->
+    <header class="bg-gray-900 shadow-lg py-4 px-6 fixed w-full z-50 rounded-b-lg">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a href="#" class="text-3xl font-extrabold text-white tracking-wider rounded-lg p-2 hover:text-f6ad55 transition-colors">
+                [Your Name]
+            </a>
+            <ul class="flex space-x-6">
+                <li><a href="#about" class="nav-link text-gray-300 hover:text-white font-medium">About</a></li>
+                <li><a href="#journey" class="nav-link text-gray-300 hover:text-white font-medium">Journey</a></li>
+                <li><a href="#portfolio" class="nav-link text-gray-300 hover:text-white font-medium">Portfolio</a></li>
+                <li><a href="#skills" class="nav-link text-gray-300 hover:text-white font-medium">Skills</a></li>
+                <li><a href="#contact" class="nav-link text-gray-300 hover:text-white font-medium">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
 
-    <!-- 3D WebGL Canvas -->
-    <canvas class="webgl"></canvas>
-
-    <!-- Hero Backup (visible if WebGL fails or initially) -->
-    <div id="hero-backup" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center text-primary-color z-10">
-      <h3 class="text-2xl md:text-3xl font-light">Hi there, I’m</h3>
-      <h1 class="text-6xl md:text-8xl font-extrabold">SigmaDox</h1>
-      <ul class="list-none p-0 m-0 text-xl md:text-2xl font-medium">
-        <li>Software Engineer</li>
-        <li>Digital Designer</li>
-      </ul>
-    </div>
-
-    <!-- Navigation Bar -->
-    <nav class="fixed top-0 left-0 w-full flex justify-between items-center p-4 bg-white bg-opacity-90 backdrop-blur-sm shadow-md z-50 rounded-b-lg">
-      <div class="menu-btn flex items-center space-x-2">
-        <button class="btn p-2 rounded-lg bg-primary-color text-text-color transition-colors hover:bg-opacity-80 md:hidden" onclick="toggleMenu()">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-            <rect y="3" width="24" height="3"></rect>
-            <rect y="10" width="24" height="3"></rect>
-            <rect y="17" width="24" height="3"></rect>
-          </svg>
-        </button>
-        <div class="flex space-x-2">
-          <a class="btn p-2 rounded-lg bg-primary-color text-text-color transition-colors hover:bg-opacity-80" href="https://www.linkedin.com/in/edwardhinrichsen/" target="_blank" aria-label="LinkedIn">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M20.447 20.447h-3.526v-5.592c0-1.33-.473-2.242-1.677-2.242-1.33 0-2.12.898-2.467 1.764-.13.31-.162.748-.162 1.186v4.884h-3.526s.046-9.617 0-10.609h3.526v1.503c.465-.72 1.306-1.748 3.17-1.748 2.31 0 4.044 1.517 4.044 4.753v6.098zM5.337 9.332a2.03 2.03 0 01-2.03-2.03c0-1.12.91-2.03 2.03-2.03s2.03.91 2.03 2.03c0 1.12-.91 2.03-2.03 2.03zm1.763 11.115h-3.526v-10.609h3.526v10.609z"></path>
-            </svg>
-          </a>
-          <a class="btn p-2 rounded-lg bg-primary-color text-text-color transition-colors hover:bg-opacity-80" href="https://bsky.app/profile/edh.dev/" target="_blank" aria-label="Bluesky">
-            <svg viewBox="0 0 64 57" width="20" height="17.76" fill="currentColor">
-              <path d="M13.873 3.805C21.21 9.332 29.103 20.537 32 26.55v15.882c0-.338-.13.044-.41.867-1.512 4.456-7.418 21.847-20.923 7.944-7.111-7.32-3.819-14.64 9.125-16.85-7.405 1.264-15.73-.825-18.014-9.015C1.12 23.022 0 8.51 0 6.55 0-3.268 8.579-.182 13.873 3.805ZM50.127 3.805C42.79 9.332 34.897 20.537 32 26.55v15.882c0-.338.13.044.41.867 1.512 4.456 7.418 21.847 20.923 7.944 7.111-7.32 3.819-14.64-9.125-16.85 7.405 1.264 15.73-.825 18.014-9.015C62.88 23.022 64 8.51 64 6.55c0-9.818-8.578-6.732-13.873-2.745Z"></path>
-            </svg>
-          </a>
-          <a class="btn p-2 rounded-lg bg-primary-color text-text-color transition-colors hover:bg-opacity-80" href="https://github.com/edhinrichsen/retro-computer-website" target="_blank" aria-label="GitHub">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.6.11 1.02-.26 1.02-.577v-2.234c-3.338.726-4.042-1.61-4.042-1.61-.542-1.372-1.328-1.739-1.328-1.739-1.087-.745.084-.729.084-.729 1.205.084 1.838 1.237 1.838 1.237 1.07 1.835 2.809 1.305 3.492.997.108-.775.418-1.305.762-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.382 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1-.322 3.3 1.235.96-.267 1.98-.399 3-.399s2.04.132 3 .399c2.295-1.557 3.295-1.235 3.295-1.235.645 1.653.24 2.873.105 3.176.77.838 1.235 1.91 1.235 3.22 0 4.61-2.801 5.62-5.471 5.922.429.369.812 1.101.812 2.219v3.293c0 .319.413.691 1.025.577C20.565 22.185 24 17.68 24 12c0-6.627-5.372-12-12-12z"></path>
-            </svg>
-          </a>
+    <!-- Hero Section -->
+    <section class="relative h-screen flex items-center justify-center text-center bg-cover bg-center" style="background-image: url('https://placehold.co/1920x1080/2d3748/e2e8f0?text=Your+Hero+Image');">
+        <div class="absolute inset-0 bg-black opacity-60 rounded-b-lg"></div>
+        <div class="relative z-10 p-8 rounded-xl bg-gray-800 bg-opacity-70 shadow-2xl max-w-3xl mx-auto">
+            <h1 class="text-6xl md:text-7xl font-extrabold leading-tight mb-4 text-white">
+                Hello, I'm <span class="text-f6ad55">[Your Name]</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-300 mb-8">
+                A creative professional passionate about [Your Passion/Field]. Welcome to my journey.
+            </p>
+            <a href="#portfolio" class="btn-primary text-xl shadow-lg hover:shadow-xl">View My Work</a>
         </div>
-      </div>
+    </section>
 
-      <div class="menu-body hidden md:flex md:space-x-4" onclick="closeMenu()">
-        <a class="text-text-color hover:text-primary-color transition-colors" href="#home">Home</a>
-        <a class="text-text-color hover:text-primary-color transition-colors" href="#aboutMe">About</a>
-        <a class="text-text-color hover:text-primary-color transition-colors" href="#contact">Contact</a>
-      </div>
+    <!-- About Me Section -->
+    <section id="about" class="py-20 px-6 bg-gray-800 rounded-lg mx-auto my-10 max-w-6xl">
+        <div class="container mx-auto text-center">
+            <h2 class="section-title">About Me</h2>
+            <div class="flex flex-col md:flex-row items-center md:space-x-10">
+                <div class="md:w-1/3 mb-8 md:mb-0">
+                    <img src="https://placehold.co/300x300/4a5568/e2e8f0?text=Your+Photo" alt="Your Photo" class="rounded-full w-60 h-60 object-cover mx-auto shadow-lg border-4 border-f6ad55">
+                </div>
+                <div class="md:w-2/3 text-lg text-gray-300 text-left">
+                    <p class="mb-4">
+                        Hi there! I'm [Your Name], a [Your Profession/Role] with a deep passion for [Your Specific Interest]. My journey began [briefly mention origin/start] and has since evolved through various experiences and learning opportunities.
+                    </p>
+                    <p class="mb-4">
+                        I believe in [Your Core Belief/Philosophy]. My work is driven by a desire to [Your Goal/Impact]. I'm constantly exploring new ideas and technologies to bring innovative solutions to life.
+                    </p>
+                    <p>
+                        Outside of my professional pursuits, I enjoy [Hobbies/Interests]. These activities not only provide balance but also inspire my creative process.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-      <div id="tip-scroll" class="hidden md:block fixed bottom-4 right-4 bg-gray-800 text-white px-4 py-2 rounded-lg text-sm z-40">Scroll ↓</div>
-    </nav>
+    <!-- Life Journey Section (Timeline Inspired by Magenta Holloway's Process) -->
+    <section id="journey" class="py-20 px-6 rounded-lg mx-auto my-10 max-w-6xl">
+        <div class="container mx-auto text-center">
+            <h2 class="section-title">My Life Journey</h2>
+            <div class="relative max-w-3xl mx-auto mt-10">
+                <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gray-700 rounded-full hidden md:block"></div>
+                <!-- Timeline Items -->
+                <div class="flex flex-col items-center">
+                    <!-- Item 1 -->
+                    <div class="timeline-item w-full md:w-1/2 md:pr-10 md:text-right md:self-start mb-8">
+                        <div class="card p-6">
+                            <h3 class="text-2xl font-bold text-f6ad55 mb-2">2010 - The Beginning</h3>
+                            <p class="text-gray-300">Started my academic journey at [University Name], focusing on [Field of Study]. This period laid the foundation for my future endeavors.</p>
+                        </div>
+                    </div>
+                    <!-- Item 2 -->
+                    <div class="timeline-item w-full md:w-1/2 md:pl-10 md:text-left md:self-end mb-8">
+                        <div class="card p-6">
+                            <h3 class="text-2xl font-bold text-f6ad55 mb-2">2014 - First Professional Role</h3>
+                            <p class="text-gray-300">Joined [Company Name] as a [Role], where I gained valuable experience in [Key Skills/Areas].</p>
+                        </div>
+                    </div>
+                    <!-- Item 3 -->
+                    <div class="timeline-item w-full md:w-1/2 md:pr-10 md:text-right md:self-start mb-8">
+                        <div class="card p-6">
+                            <h3 class="text-2xl font-bold text-f6ad55 mb-2">2018 - Major Project Milestone</h3>
+                            <p class="text-gray-300">Led the development of [Project Name], a significant achievement that honed my [Specific Skills].</p>
+                        </div>
+                    </div>
+                    <!-- Item 4 -->
+                    <div class="timeline-item w-full md:w-1/2 md:pl-10 md:text-left md:self-end mb-8">
+                        <div class="card p-6">
+                            <h3 class="text-2xl font-bold text-f6ad55 mb-2">2022 - Personal Growth & Exploration</h3>
+                            <p class="text-gray-300">Took a sabbatical to explore [Personal Interest/Travel], which broadened my perspective and fueled new creative ideas.</p>
+                        </div>
+                    </div>
+                    <!-- Item 5 -->
+                    <div class="timeline-item w-full md:w-1/2 md:pr-10 md:text-right md:self-start mb-8">
+                        <div class="card p-6">
+                            <h3 class="text-2xl font-bold text-f6ad55 mb-2">Present - Current Focus</h3>
+                            <p class="text-gray-300">Currently focused on [Current Projects/Goals] and continuously learning [New Technologies/Skills].</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <!-- Main Content Sections -->
-    <main class="relative z-10 pt-20">
-      <section id="aboutMe" class="max-w-4xl mx-auto p-8 bg-white rounded-xl shadow-lg my-8">
-        <h1 class="text-4xl font-bold mb-6 text-center text-secondary-color">Hi there</h1>
-        <p class="mb-4">
-          My name is SigmaDox, I’m an award-winning web dev / digital
-          designer and full stack software engineer. I have a passion for all
-          things technology and design, from software engineering & machine
-          learning to UI/UX & 3D graphics.
-        </p>
-        <p class="mb-4">
-          In addition to my love of technology and design, I am also interested
-          in education, history, economics and politics.
-        </p>
-        <p>
-          I leverage my fifteen plus years of coding experience to craft innovative and impactful digital experiences.
-        </p>
-      </section>
+    <!-- Portfolio Section (Grid Layout Inspired by Frame Up/Simon Sparks) -->
+    <section id="portfolio" class="py-20 px-6 bg-gray-800 rounded-lg mx-auto my-10 max-w-6xl">
+        <div class="container mx-auto text-center">
+            <h2 class="section-title">My Portfolio</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-10">
+                <!-- Project 1 -->
+                <div class="card">
+                    <img src="https://placehold.co/400x300/4a5568/e2e8f0?text=Project+1" alt="Project 1" class="rounded-lg mb-4 w-full h-48 object-cover">
+                    <h3 class="text-2xl font-bold text-f6ad55 mb-2">Project Name One</h3>
+                    <p class="text-gray-300 mb-4">A brief description of this project, highlighting its purpose and your role.</p>
+                    <a href="#" class="btn-primary text-sm">View Details</a>
+                </div>
+                <!-- Project 2 -->
+                <div class="card">
+                    <img src="https://placehold.co/400x300/4a5568/e2e8f0?text=Project+2" alt="Project 2" class="rounded-lg mb-4 w-full h-48 object-cover">
+                    <h3 class="text-2xl font-bold text-f6ad55 mb-2">Project Name Two</h3>
+                    <p class="text-gray-300 mb-4">Another project description, focusing on the challenges and solutions.</p>
+                    <a href="#" class="btn-primary text-sm">View Details</a>
+                </div>
+                <!-- Project 3 -->
+                <div class="card">
+                    <img src="https://placehold.co/400x300/4a5568/e2e8f0?text=Project+3" alt="Project 3" class="rounded-lg mb-4 w-full h-48 object-cover">
+                    <h3 class="text-2xl font-bold text-f6ad55 mb-2">Project Name Three</h3>
+                    <p class="text-gray-300 mb-4">Description for the third project, emphasizing the impact or outcome.</p>
+                    <a href="#" class="btn-primary text-sm">View Details</a>
+                </div>
+                <!-- Project 4 -->
+                <div class="card">
+                    <img src="https://placehold.co/400x300/4a5568/e2e8f0?text=Project+4" alt="Project 4" class="rounded-lg mb-4 w-full h-48 object-cover">
+                    <h3 class="text-2xl font-bold text-f6ad55 mb-2">Project Name Four</h3>
+                    <p class="text-gray-300 mb-4">A fourth project description, detailing the technologies used or lessons learned.</p>
+                    <a href="#" class="btn-primary text-sm">View Details</a>
+                </div>
+                <!-- Project 5 -->
+                <div class="card">
+                    <img src="https://placehold.co/400x300/4a5568/e2e8f0?text=Project+5" alt="Project 5" class="rounded-lg mb-4 w-full h-48 object-cover">
+                    <h3 class="text-2xl font-bold text-f6ad55 mb-2">Project Name Five</h3>
+                    <p class="text-gray-300 mb-4">Description for the fifth project, focusing on collaboration or unique aspects.</p>
+                    <a href="#" class="btn-primary text-sm">View Details</a>
+                </div>
+                <!-- Project 6 -->
+                <div class="card">
+                    <img src="https://placehold.co/400x300/4a5568/e2e8f0?text=Project+6" alt="Project 6" class="rounded-lg mb-4 w-full h-48 object-cover">
+                    <h3 class="text-2xl font-bold text-f6ad55 mb-2">Project Name Six</h3>
+                    <p class="text-gray-300 mb-4">Final project description, summarizing its overall contribution to your portfolio.</p>
+                    <a href="#" class="btn-primary text-sm">View Details</a>
+                </div>
+            </div>
+        </div>
+    </section>
 
-      <section id="contact" class="max-w-4xl mx-auto p-8 bg-white rounded-xl shadow-lg my-8">
-        <h1 class="text-4xl font-bold mb-6 text-center text-secondary-color">Contact</h1>
-        <p class="text-center text-lg">
-          Reach out on
-          <a href="https://www.linkedin.com/in/edwardhinrichsen/" class="text-blue-600 hover:underline font-bold"
-            ><u>LinkedIn</u></a
-          >
-        </p>
-      </section>
-    </main>
+    <!-- Skills Section (Inspired by Frame Up's Services) -->
+    <section id="skills" class="py-20 px-6 rounded-lg mx-auto my-10 max-w-6xl">
+        <div class="container mx-auto text-center">
+            <h2 class="section-title">My Skills</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+                <div class="card flex items-center p-4">
+                    <span class="text-f6ad55 text-4xl mr-4">&#9733;</span> <!-- Star icon -->
+                    <h3 class="text-xl font-bold">Web Development</h3>
+                </div>
+                <div class="card flex items-center p-4">
+                    <span class="text-f6ad55 text-4xl mr-4">&#9733;</span>
+                    <h3 class="text-xl font-bold">UI/UX Design</h3>
+                </div>
+                <div class="card flex items-center p-4">
+                    <span class="text-f6ad55 text-4xl mr-4">&#9733;</span>
+                    <h3 class="text-xl font-bold">Graphic Design</h3>
+                </div>
+                <div class="card flex items-center p-4">
+                    <span class="text-f6ad55 text-4xl mr-4">&#9733;</span>
+                    <h3 class="text-xl font-bold">Project Management</h3>
+                </div>
+                <div class="card flex items-center p-4">
+                    <span class="text-f6ad55 text-4xl mr-4">&#9733;</span>
+                    <h3 class="text-xl font-bold">Content Creation</h3>
+                </div>
+                <div class="card flex items-center p-4">
+                    <span class="text-f6ad55 text-4xl mr-4">&#9733;</span>
+                    <h3 class="text-xl font-bold">Problem Solving</h3>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <!-- Placeholder for original textarea, purpose unclear but included -->
-    <input type="text" id="textarea" readonly class="hidden" />
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 px-6 bg-gray-900 rounded-lg mx-auto my-10 max-w-6xl">
+        <div class="container mx-auto text-center">
+            <h2 class="section-title text-white">Get In Touch</h2>
+            <p class="text-lg text-gray-300 mb-8 max-w-2xl mx-auto">
+                Have a project in mind or just want to chat? Feel free to reach out! I'm always open to new opportunities and collaborations.
+            </p>
+            <div class="flex flex-col md:flex-row justify-center items-center space-y-6 md:space-y-0 md:space-x-10">
+                <div class="text-center">
+                    <p class="text-f6ad55 text-3xl mb-2">&#9993;</p> <!-- Email icon -->
+                    <p class="text-xl font-semibold">Email Me</p>
+                    <a href="mailto:your.email@example.com" class="text-gray-400 hover:text-white transition-colors">your.email@example.com</a>
+                </div>
+                <div class="text-center">
+                    <p class="text-f6ad55 text-3xl mb-2">&#9742;</p> <!-- Phone icon -->
+                    <p class="text-xl font-semibold">Call Me</p>
+                    <a href="tel:+1234567890" class="text-gray-400 hover:text-white transition-colors">+1 (234) 567-890</a>
+                </div>
+                <div class="text-center">
+                    <p class="text-f6ad55 text-3xl mb-2">&#128279;</p> <!-- Link icon for social media -->
+                    <p class="text-xl font-semibold">Connect</p>
+                    <div class="flex justify-center space-x-4 mt-2">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors text-2xl">&#x1F4BB;</a> <!-- LinkedIn -->
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors text-2xl">&#x1F30E;</a> <!-- Behance/Dribbble -->
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors text-2xl">&#x1F4DA;</a> <!-- GitHub -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Footer -->
-    <footer class="text-center p-8 mt-12 bg-secondary-color text-white text-sm rounded-t-xl">
-      <div class="mb-2">Developed + Designed by SigmaDox.</div>
-      <div class="mb-2">Computer design based on the Commodore PET 8296.</div>
-      <div class="mb-2">
-        Built on the traditional land of the Wurundjeri and Boon Wurrung peoples
-        of the Kulin nation. I pay my respect to Elders past, present and
-        emerging.
-      </div>
-      <div class="mb-2">
-        Sovereignty has never been ceded. It always was and always will be
-        Aboriginal land.
-      </div>
-      <div>COPYRIGHT © 2022-2024 SigmaDox.</div>
+    <footer class="bg-gray-900 py-8 px-6 text-center text-gray-400 rounded-t-lg">
+        <p>&copy; 2025 [Your Name]. All rights reserved.</p>
+        <p class="mt-2">Designed with <span class="text-red-500">&hearts;</span> by AI</p>
     </footer>
 
-    <!-- Three.js Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <!-- webgl-helper.min.js (included as per original, but core 3D logic is standard Three.js) -->
-    <script src="https://cdn-ts.netlify.app/webgl-helper@3.0.11/webgl-helper.min.js"></script>
-    <!-- Google Analytics (as per original) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-EDNKHGV4HB"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
-      gtag("config", "G-EDNKHGV4HB");
-      gtag("event", "origin", { name: window.origin });
-    </script>
-
-    <script>
-      // DOM Content Loaded: Ensure all HTML is parsed before running scripts
-      document.addEventListener('DOMContentLoaded', () => {
-        // --- Loading Screen Logic ---
-        const loadingScreen = document.getElementById('loading');
-        const loadingBarProgress = document.getElementById('loading-bar-progress');
-        const loadingItems = document.getElementById('loading-items');
-        const heroBackup = document.getElementById('hero-backup');
-        const webglCanvas = document.querySelector('.webgl');
-
-        let loadingProgress = 0;
-        const loadingMessages = [
-          'Initializing...',
-          'Loading assets...',
-          'Compiling shaders...',
-          'Establishing connection...',
-          'Boot sequence complete.'
-        ];
-        let messageIndex = 0;
-
-        function updateLoadingScreen() {
-          loadingProgress += 20; // Increment by 20% for each message
-          loadingBarProgress.style.width = `${loadingProgress}%`;
-          if (messageIndex < loadingMessages.length) {
-            loadingItems.textContent = loadingMessages[messageIndex];
-            messageIndex++;
-          }
-        }
-
-        // Simulate loading progress
-        const loadingInterval = setInterval(updateLoadingScreen, 500);
-
-        // --- Navigation Menu Logic ---
-        const nav = document.getElementsByTagName('nav')[0];
-
-        window.toggleMenu = function() {
-          nav.classList.toggle('active');
-          // On mobile, if menu is open, hide scroll tip
-          if (window.innerWidth < 768) { // Tailwind's md breakpoint
-            const tipScroll = document.getElementById('tip-scroll');
-            if (nav.classList.contains('active')) {
-              tipScroll.classList.add('hidden');
-            } else {
-              tipScroll.classList.remove('hidden');
-            }
-          }
-        };
-
-        window.closeMenu = function() {
-          nav.classList.remove('active');
-          if (window.innerWidth < 768) { // Tailwind's md breakpoint
-            document.getElementById('tip-scroll').classList.remove('hidden');
-          }
-        };
-
-        // Hide menu on resize if it's open and switches to desktop view
-        window.addEventListener('resize', () => {
-          if (window.innerWidth >= 768) {
-            nav.classList.remove('active');
-            document.getElementById('tip-scroll').classList.add('hidden'); // Always hidden on desktop
-          } else {
-            // On mobile, if menu is closed, show scroll tip
-            if (!nav.classList.contains('active')) {
-              document.getElementById('tip-scroll').classList.remove('hidden');
-            }
-          }
-        });
-
-        // Initial check for scroll tip visibility
-        if (window.innerWidth >= 768) {
-          document.getElementById('tip-scroll').classList.add('hidden');
-        } else {
-          document.getElementById('tip-scroll').classList.remove('hidden');
-        }
-
-
-        // --- Collapse Button Logic (kept for potential future use or if any hidden collapse elements are added) ---
-        document.querySelectorAll('.collapse-btn').forEach(button => {
-          button.addEventListener('click', () => {
-            const isCollapsed = button.getAttribute('collapsed') === 'true';
-            button.setAttribute('collapsed', !isCollapsed);
-            button.textContent = isCollapsed ? 'less...' : 'more...';
-          });
-        });
-
-        // --- Three.js for 3D Retro Computer ---
-        let scene, camera, renderer, computerMesh;
-        let mouseX = 0, mouseY = 0;
-        let targetX = 0, targetY = 0;
-        let idleRotation = 0; // For continuous idle rotation
-        const windowHalfX = window.innerWidth / 2;
-        const windowHalfY = window.innerHeight / 2;
-
-        function initThreeJS() {
-          // 1. Scene
-          scene = new THREE.Scene();
-          scene.background = new THREE.Color(0x1a1a1a); // Dark background for retro feel
-
-          // 2. Camera
-          camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-          camera.position.z = 5;
-
-          // 3. Renderer
-          renderer = new THREE.WebGLRenderer({ canvas: webglCanvas, antialias: true });
-          renderer.setSize(window.innerWidth, window.innerHeight);
-          renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Optimize for device pixel ratio
-
-          // 4. Lights
-          const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // Soft white light
-          scene.add(ambientLight);
-          const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-          directionalLight.position.set(1, 1, 1).normalize();
-          scene.add(directionalLight);
-
-          // 5. Create a simple Retro Computer Model (using basic geometries)
-          // Main body
-          const bodyGeometry = new THREE.BoxGeometry(2.5, 1.5, 0.8);
-          const bodyMaterial = new THREE.MeshStandardMaterial({ color: 0x4a4a4a, metalness: 0.5, roughness: 0.5 });
-          const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
-          body.position.set(0, 0.2, 0); // Lift slightly
-
-          // Screen
-          const screenGeometry = new THREE.BoxGeometry(2.0, 1.0, 0.1);
-          const screenMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00, emissive: 0x00ff00, emissiveIntensity: 0.2 }); // Green glow
-          const screen = new THREE.Mesh(screenGeometry, screenMaterial);
-          screen.position.set(0, 0.4, 0.4); // Position on top of the body
-
-          // Keyboard base
-          const keyboardGeometry = new THREE.BoxGeometry(2.2, 0.1, 0.6);
-          const keyboardMaterial = new THREE.MeshStandardMaterial({ color: 0x3a3a3a, metalness: 0.5, roughness: 0.5 });
-          const keyboard = new THREE.Mesh(keyboardGeometry, keyboardMaterial);
-          keyboard.position.set(0, -0.4, 0.4); // Position in front of the body
-
-          // Group them
-          computerMesh = new THREE.Group();
-          computerMesh.add(body);
-          computerMesh.add(screen);
-          computerMesh.add(keyboard);
-
-          scene.add(computerMesh);
-
-          // Initial rotation for a better view
-          computerMesh.rotation.y = Math.PI * 0.1;
-          computerMesh.rotation.x = Math.PI * 0.05;
-
-          // Event Listeners for mouse interaction
-          document.addEventListener('mousemove', onDocumentMouseMove);
-          document.addEventListener('touchmove', onDocumentTouchMove);
-          window.addEventListener('resize', onWindowResize);
-
-          // Hide hero backup and loading screen
-          heroBackup.classList.add('hidden');
-          loadingScreen.classList.add('hidden');
-
-          animate(); // Start the animation loop
-        }
-
-        function onDocumentMouseMove(event) {
-          mouseX = (event.clientX - windowHalfX) / 100;
-          mouseY = (event.clientY - windowHalfY) / 100;
-          idleRotation = 0; // Reset idle rotation when mouse moves
-        }
-
-        function onDocumentTouchMove(event) {
-          if (event.touches.length === 1) {
-            event.preventDefault();
-            mouseX = (event.touches[0].pageX - windowHalfX) / 100;
-            mouseY = (event.touches[0].pageY - windowHalfY) / 100;
-            idleRotation = 0; // Reset idle rotation when touch moves
-          }
-        }
-
-        function onWindowResize() {
-          camera.aspect = window.innerWidth / window.innerHeight;
-          camera.updateProjectionMatrix();
-          renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-
-        function animate() {
-          requestAnimationFrame(animate);
-
-          // Smoothly rotate the computer mesh based on mouse position
-          targetX = mouseX * 0.001;
-          targetY = mouseY * 0.001;
-
-          if (computerMesh) {
-            computerMesh.rotation.y += (targetX - computerMesh.rotation.y) * 0.05;
-            computerMesh.rotation.x += (targetY - computerMesh.rotation.x) * 0.05;
-
-            // Add subtle idle rotation if mouse is not moving much
-            if (Math.abs(targetX - computerMesh.rotation.y) < 0.001 && Math.abs(targetY - computerMesh.rotation.x) < 0.001) {
-                idleRotation += 0.0005; // Adjust speed as needed
-                computerMesh.rotation.y += Math.sin(idleRotation) * 0.001;
-                computerMesh.rotation.x += Math.cos(idleRotation * 0.5) * 0.0005;
-            }
-          }
-
-          renderer.render(scene, camera);
-        }
-
-        // Delay the Three.js initialization to simulate loading time
-        setTimeout(() => {
-          clearInterval(loadingInterval); // Stop loading progress simulation
-          loadingBarProgress.style.width = '100%';
-          loadingItems.textContent = 'Ready!';
-          setTimeout(() => {
-            try {
-              initThreeJS(); // Attempt to initialize Three.js
-            } catch (e) {
-              console.error("Failed to initialize Three.js:", e);
-              // Fallback: Show hero backup if Three.js fails
-              heroBackup.classList.remove('hidden');
-              webglCanvas.classList.add('hidden'); // Hide canvas if it failed
-              loadingScreen.classList.add('hidden');
-            }
-          }, 500); // Short delay after 'Ready!'
-        }, loadingMessages.length * 500 + 500); // Total loading time + a bit more
-
-
-        // --- Intersection Observer for Section Animations ---
-        const sections = document.querySelectorAll('section');
-        const observerOptions = {
-          root: null, // viewport as the root
-          rootMargin: '0px',
-          threshold: 0.1 // Trigger when 10% of the section is visible
-        };
-
-        const sectionObserver = new IntersectionObserver((entries, observer) => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add('animated');
-              observer.unobserve(entry.target); // Stop observing once animated
-            }
-          });
-        }, observerOptions);
-
-        sections.forEach(section => {
-          sectionObserver.observe(section);
-        });
-
-      }); // End DOMContentLoaded
-    </script>
-  </body>
+</body>
 </html>
-
